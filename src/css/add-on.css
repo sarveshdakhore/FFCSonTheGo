@@ -321,3 +321,24 @@ tr.sortable-chosen1 td {
     font-size: medium;
     word-spacing: 0px;
 }
+
+#scrollButton {
+    background: none;
+    border: none;
+    border-radius: 50%;
+    position: fixed;
+    bottom: 20px;
+    right: 2px;
+    z-index: 9999;
+}
+
+#scrollImg {
+    height: 50px;
+    width: 50px;
+}
+
+@media screen and (max-width: 1400px) {
+    #scrollButton {
+        display: none;
+    }
+}

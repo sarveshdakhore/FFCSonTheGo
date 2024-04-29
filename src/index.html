@@ -57,6 +57,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </head>
 
     <body>
+        <button id="scrollButton">
+            <img
+                style="height: 50px; width: 50px"
+                id="scrollImg"
+                src="./images/top.svg"
+                alt="Scroll to top"
+            />
+        </button>
         <!-- Service worker to check for an update -->
         <script>
             // Check if service workers are supported
@@ -1133,6 +1141,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <hr />
 
         <!-- Course list table -->
+        <a href="#course_list11" id="course_list11"></a>
         <div class="container-xxl">
             <blockquote>
                 <p class="text-black-50 px-3 fs-6 fw-light">
@@ -1521,7 +1530,48 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.10.2/Sortable.min.js"></script>
         <script src="./js/add_on.js"></script>
+        <script>
+            const scrollButton = document.getElementById('scrollButton');
+            const scrollImg = document.getElementById('scrollImg');
+            const targetElement = document.getElementById('course_list11');
 
+            const minScrollPercent = 45; // Set your minimum scroll amount as a percentage
+            const rotateScrollPercent = 70; // Set the scroll amount to rotate the SVG as a percentage
+
+            const minScroll =
+                document.body.scrollHeight * (minScrollPercent / 100);
+            const rotateScroll =
+                document.body.scrollHeight * (rotateScrollPercent / 100);
+
+            window.addEventListener('scroll', () => {
+                const scrollPosition = window.pageYOffset;
+
+                if (scrollPosition >= rotateScroll) {
+                    // Rotate the SVG 180 degrees to become "go down" button
+                    scrollImg.style.transform = 'rotate(180deg)';
+                } else if (scrollPosition < minScroll) {
+                    // Reset the rotation to become "go up" button
+                    scrollImg.style.transform = 'rotate(0deg)';
+                }
+            });
+
+            scrollButton.addEventListener('click', (event) => {
+                event.preventDefault();
+
+                if (scrollImg.style.transform === 'rotate(180deg)') {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    const targetPosition =
+                        targetElement.getBoundingClientRect().top +
+                        window.pageYOffset -
+                        95;
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth',
+                    });
+                }
+            });
+        </script>
         <script>
             var disqus_config = function () {
                 this.page.url = 'https://ffcsonthego.sarveshdakhore.in/'; // Replace PAGE_URL with your page's canonical URL variable
