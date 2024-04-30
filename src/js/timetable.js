@@ -3758,7 +3758,7 @@ document
         }
         var jsonStr = JSON.stringify(activeTable);
         var utf8Str = btoa(encodeURIComponent(jsonStr));
-        var blob = new Blob([utf8Str], { type: 'text/plain' }); // Create a new Blob object
+        var blob = new Blob([utf8Str], { type: 'application/octet-stream' }); // Set MIME type as octet-stream
         var url = URL.createObjectURL(blob); // Create a URL for the Blob object
         var dlAnchorElem = document.createElement('a'); // Create a new 'a' element
         // Set its attributes
@@ -3779,7 +3779,7 @@ document
     .addEventListener('click', function () {
         var input = document.createElement('input');
         input.type = 'file';
-        input.accept = '.ffcsSaver, .txt';
+        input.accept = '.ffcsSaver, .txt, .ffcsonthego';
         input.onchange = function (event) {
             processFile(event.target.files[0]);
         };
