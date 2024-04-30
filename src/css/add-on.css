@@ -337,7 +337,7 @@ tr.sortable-chosen1 td {
     width: 50px;
 }
 
-@media screen and (max-width: 1400px) {
+@media screen and (max-width: 1399px) {
     #scrollButton {
         display: none;
     }
