@@ -342,9 +342,3 @@ tr.sortable-chosen1 td {
         display: none;
     }
 }
-
-.sticky {
-    position: fixed;
-    top: 0;
-    z-index: 1000; /* Ensure it sits on top of other elements */
-}
