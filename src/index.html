@@ -1143,12 +1143,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         >
             <div><table></table></div>
         </div>
-        <!-- End of quick selection tiles -->
 
+        <!-- End of quick selection tiles -->
+        <a href="#course_list11" class="sticky" id="course_list11"></a>
         <hr />
 
         <!-- Course list table -->
-        <a href="#course_list11" id="course_list11"></a>
+
         <div class="container-xxl">
             <blockquote>
                 <p class="text-black-50 px-3 fs-6 fw-light">
@@ -1534,22 +1535,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 const scrollButton = document.getElementById('scrollButton');
                 const scrollImg = document.getElementById('scrollImg');
                 const targetElement = document.getElementById('course_list11');
-
-                const minScrollPercent = 45; // Set your minimum scroll amount as a percentage
-                const rotateScrollPercent = 70; // Set the scroll amount to rotate the SVG as a percentage
-
-                const minScroll =
-                    document.body.scrollHeight * (minScrollPercent / 100);
-                const rotateScroll =
-                    document.body.scrollHeight * (rotateScrollPercent / 100);
+                const navbarHeight =
+                    document.getElementById('navbar').offsetHeight; // Replace 'navbar' with the id of your navbar
 
                 window.addEventListener('scroll', () => {
                     const scrollPosition = window.pageYOffset;
+                    const targetPosition =
+                        targetElement.getBoundingClientRect().top +
+                        window.pageYOffset;
 
-                    if (scrollPosition >= rotateScroll) {
+                    if (scrollPosition >= targetPosition - navbarHeight) {
+                        targetElement.classList.add('sticky');
                         // Rotate the SVG 180 degrees to become "go down" button
                         scrollImg.style.transform = 'rotate(180deg)';
-                    } else if (scrollPosition < minScroll) {
+                    } else {
+                        targetElement.classList.remove('sticky');
                         // Reset the rotation to become "go up" button
                         scrollImg.style.transform = 'rotate(0deg)';
                     }
@@ -1564,7 +1564,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         const targetPosition =
                             targetElement.getBoundingClientRect().top +
                             window.pageYOffset -
-                            95;
+                            navbarHeight;
                         window.scrollTo({
                             top: targetPosition,
                             behavior: 'smooth',
