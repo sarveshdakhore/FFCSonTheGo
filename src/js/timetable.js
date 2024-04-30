@@ -2161,7 +2161,7 @@ $(() => {
                 .attr('href', canvas.toDataURL('image/jpeg'))
                 .attr(
                     'download',
-                    `FFCS On The Go ${activeTable.name} (Timetable).jpg`,
+                    `FFCS Saver ${activeTable.name} (Timetable).jpg`,
                 );
 
             $('body').append($a);
@@ -2233,7 +2233,7 @@ $(() => {
                 .attr('href', canvas.toDataURL('image/jpeg'))
                 .attr(
                     'download',
-                    `FFCS On The Go ${activeTable.name} (Course List).jpg`,
+                    `FFCS Saver ${activeTable.name} (Course List).jpg`,
                 );
 
             $('body').append($a);
@@ -2329,10 +2329,10 @@ function appendHeader($layout, width) {
             'margin-bottom': '1rem',
         })
         .append(
-            $('<h3>FFCS On The Go</h3>').css({
+            $('<h3>FFCS Saver</h3>').css({
                 margin: 0,
                 display: 'inline',
-                color: '#9c27b0',
+                color: '#005c5c',
                 'font-weight': 'bold',
             }),
         )
@@ -3391,7 +3391,7 @@ document
                         createSubjectJsonFromHtml();
                     } else {
                         spanMsg = 'Course already exists';
-                        spanMsgColor = 'red';
+                        spanMsgColor = 'orange';
                     }
                 }
             });
@@ -3401,6 +3401,7 @@ document
         spanMsgDiv.innerText = spanMsg;
         spanMsgDiv.style.color = spanMsgColor;
         spanMsgDiv.style.display = 'block';
+        spanMsgDiv.style.fontWeight = 'bolder';
         var hrHide = document.getElementById('hide_br-edit');
         hrHide.style.display = 'none';
         setTimeout(function () {
@@ -3569,6 +3570,7 @@ document
         spanTeacherMsg.innerText = spanMsg;
         spanTeacherMsg.style.color = spanMsgColor;
         spanTeacherMsg.style.display = 'block';
+        spanTeacherMsg.style.fontWeight = 'bolder';
         brHideTeacher.style.display = 'none';
         setTimeout(function () {
             spanTeacherMsg.style.display = 'none';
@@ -3760,10 +3762,7 @@ document
         var dlAnchorElem = document.createElement('a'); // Create a new 'a' element
         // Set its attributes
         dlAnchorElem.setAttribute('href', url);
-        dlAnchorElem.setAttribute(
-            'download',
-            activeTable.name + '.ffcsOnTheGo',
-        );
+        dlAnchorElem.setAttribute('download', activeTable.name + '.ffcsSaver');
         document.body.appendChild(dlAnchorElem); // Append it to the body (this is necessary for Firefox)
         dlAnchorElem.click();
         // Remove the element from the body after the download starts
@@ -3779,7 +3778,7 @@ document
     .addEventListener('click', function () {
         var input = document.createElement('input');
         input.type = 'file';
-        input.accept = '.ffcsonthego, .txt';
+        input.accept = '.ffcsSaver, .txt';
         input.onchange = function (event) {
             processFile(event.target.files[0]);
         };

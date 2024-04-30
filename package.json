@@ -1,12 +1,12 @@
 {
-    "name": "FFCSonTheGo",
+    "name": "FFCSSaver",
     "version": "2.0.0",
     "lastUpdate": {
         "vellore": "All Semester",
         "chennai": "All Semester"
     },
     "repository": "https://github.com/sarveshdakhore/FFCSonTheGo.git",
-    "author": "Vatsal Joshi <vatz88@gmail.com>,Sarvesh Dakhore <dmtosarvesh@gmail.com>",
+    "author": "Sarvesh Dakhore <dmtosarvesh@gmail.com>, Vatsal Joshi <vatz88@gmail.com>",
     "license": "GPL-3.0",
     "private": true,
     "scripts": {
