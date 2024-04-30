@@ -4,7 +4,6 @@
 
 This web application is a tool to visualize your timetable for the students of VIT Vellore & Chennai to help with FFCS course registrations.
 
-![Demo](/demo.gif)
 
 ## Links
 
