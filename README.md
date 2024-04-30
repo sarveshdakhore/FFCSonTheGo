@@ -4,8 +4,6 @@
 
 This web application is a tool to visualize your timetable for the students of VIT Vellore & Chennai to help with FFCS course registrations.
 
-![Demo](/demo.gif)
-
 ## Links
 
 This application has been deployed at the following links.
@@ -30,8 +28,6 @@ If you're interested in contributing to our code, refer the [contributing guidli
 -   **Sarvesh Dakhore** - [@sarveshdakhore](https://github.com/sarveshdakhore)
 -   **Vatsal Joshi** (Initial work) - [@vatz88](https://github.com/vatz88)
 -   **Sangeeth Sudheer** - [@sangeeth96](https://github.com/sangeeth96)
-
-
 
 See also the list of [contributors](https://github.com/sarveshdakhore/FFCSonTheGo/contributors) who participated in this project.
 
