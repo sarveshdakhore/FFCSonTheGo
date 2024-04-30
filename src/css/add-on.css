@@ -328,7 +328,7 @@ tr.sortable-chosen1 td {
     border-radius: 50%;
     position: fixed;
     bottom: 20px;
-    right: 2px;
+    right: 0px;
     z-index: 9999;
 }
 
@@ -337,6 +337,11 @@ tr.sortable-chosen1 td {
     width: 50px;
 }
 
+@media screen and (max-width: 1410) {
+    #scrollButton {
+        right: -5px;
+    }
+}
 @media screen and (max-width: 1399px) {
     #scrollButton {
         display: none;
