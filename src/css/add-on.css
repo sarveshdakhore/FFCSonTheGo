@@ -335,6 +335,7 @@ tr.sortable-chosen1 td {
 #scrollImg {
     height: 50px;
     width: 50px;
+    transition: transform 0.3s ease-in-out;
 }
 
 @media screen and (max-width: 1410) {
@@ -345,5 +346,6 @@ tr.sortable-chosen1 td {
 @media screen and (max-width: 1399px) {
     #scrollButton {
         display: none;
+        transition: none;
     }
 }

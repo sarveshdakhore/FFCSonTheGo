@@ -220,6 +220,7 @@ function processRawCourseName(courseInput) {
         }
         if (courseName) {
             courseName = trimSign(courseName, '-');
+            courseName = courseName.replace(/\s+/g, ' ');
             return courseName;
         }
         return '';
