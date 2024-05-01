@@ -1,4 +1,4 @@
-# FFCS On The Go
+# FFCS Planner
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/bef6de6b-7b6b-4c14-9ba9-923595184c26/deploy-status)](https://app.netlify.com/sites/cyccy2-rystum-qarvak/deploys)
 

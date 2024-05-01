@@ -2162,7 +2162,7 @@ $(() => {
                 .attr('href', canvas.toDataURL('image/jpeg'))
                 .attr(
                     'download',
-                    `FFCS Saver ${activeTable.name} (Timetable).jpg`,
+                    `FFCS Planner ${activeTable.name} (Timetable).jpg`,
                 );
 
             $('body').append($a);
@@ -2234,7 +2234,7 @@ $(() => {
                 .attr('href', canvas.toDataURL('image/jpeg'))
                 .attr(
                     'download',
-                    `FFCS Saver ${activeTable.name} (Course List).jpg`,
+                    `FFCS Planner ${activeTable.name} (Course List).jpg`,
                 );
 
             $('body').append($a);
@@ -2330,7 +2330,7 @@ function appendHeader($layout, width) {
             'margin-bottom': '1rem',
         })
         .append(
-            $('<h3>FFCS Saver</h3>').css({
+            $('<h3>FFCS Planner</h3>').css({
                 margin: 0,
                 display: 'inline',
                 color: '#005c5c',
@@ -3763,7 +3763,10 @@ document
         var dlAnchorElem = document.createElement('a'); // Create a new 'a' element
         // Set its attributes
         dlAnchorElem.setAttribute('href', url);
-        dlAnchorElem.setAttribute('download', activeTable.name + '.ffcsSaver');
+        dlAnchorElem.setAttribute(
+            'download',
+            activeTable.name + '.ffcsplanner',
+        );
         document.body.appendChild(dlAnchorElem); // Append it to the body (this is necessary for Firefox)
         dlAnchorElem.click();
         // Remove the element from the body after the download starts
@@ -3779,7 +3782,7 @@ document
     .addEventListener('click', function () {
         var input = document.createElement('input');
         input.type = 'file';
-        input.accept = '.ffcsSaver, .txt, .ffcsonthego';
+        input.accept = '.ffcsplanner, .txt, .ffcsonthego';
         input.onchange = function (event) {
             processFile(event.target.files[0]);
         };
