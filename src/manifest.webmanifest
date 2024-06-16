@@ -1,6 +1,6 @@
 {
-    "name": "FFCS On The Go",
-    "short_name": "FFCSOnTheGo",
+    "name": "FFCS Planner",
+    "short_name": "FFCS_Planner",
     "theme_color": "#9c27b0",
     "background_color": "#ffffff",
     "display": "standalone",
