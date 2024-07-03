@@ -2450,6 +2450,7 @@ $(() => {
         }
 
         renameTable(tableId, tableName);
+        location.reload();
     });
 
     /*
@@ -2800,7 +2801,6 @@ function switchTable(tableId) {
  */
 function updatePickerLabel(tableName) {
     $('#tt-picker-button').text(tableName);
-    clearCourseList();
     fillPage();
     fillLeftBoxInCoursePanel();
     revertRerrange();
