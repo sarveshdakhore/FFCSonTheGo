@@ -14,6 +14,150 @@ slotsExistInNonLectureFormat.add('SLOTS');
 
 // ********************* Global Functions *********************
 // ================== Basic ==================
+function openModalConditionallyForMultipleTeacher() {
+    var selectElement = document.getElementById('course-select-add-teacher');
+    const spanTeacherAddSuccess = document.getElementById('span-teacher-add');
+    if (
+        selectElement.value !== '' &&
+        selectElement.value !== 'Select Course' &&
+        selectElement.value !== 'You need to add courses'
+    ) {
+        // Manually open the modal if the condition is met
+        var modal = new bootstrap.Modal(
+            document.getElementById('multiple-teacher-modal'),
+        );
+        modal.show();
+    } else {
+        // Hide the 'hide_br' element
+        document.getElementById('hide_br').style.display = 'none';
+        // Set the error message properties
+        spanTeacherAddSuccess.style.color = 'red'; // Assuming 'red' is the error message color
+        spanTeacherAddSuccess.style.fontWeight = 'bolder';
+        spanTeacherAddSuccess.textContent =
+            'Please select a course before adding.';
+        // After 5 seconds, clear the message and show 'hide_br' again
+        setTimeout(() => {
+            spanTeacherAddSuccess.textContent = '';
+            document.getElementById('hide_br').style.display = 'inline';
+        }, 5000);
+    }
+}
+function parseTextToListForMultipleAdd(text) {
+    // Split the input text by new lines
+    const lines = text.trim().split('\n');
+
+    // Map each line to an array of values
+    const resultList = lines.map((line) => {
+        // Split each line by tabs or multiple spaces
+        const values = line.split(/\t+/);
+
+        // Ensure each sublist has exactly 4 elements by filling missing values with empty strings
+        while (values.length < 4) {
+            values.push('');
+        }
+
+        return values;
+    });
+
+    return resultList;
+}
+function addTeacher(courseName, teacherName, slotsInput, venueInput) {
+    // Check if the course or teacher name is empty, skip adding the teacher
+    if (
+        courseName === 'Select Course' ||
+        teacherName === '' ||
+        teacherName === 'Teacher Name' ||
+        teacherName === ''
+    ) {
+        return; // Skip adding the teacher
+    }
+
+    // Check if the course exists
+    if (
+        !timetableStoragePref[window.activeTable.id].hasOwnProperty(
+            'subject',
+        ) ||
+        Object.keys(timetableStoragePref[window.activeTable.id].subject)
+            .length === 0 ||
+        !Object.keys(timetableStoragePref[window.activeTable.id].subject)
+            .map((key) => key.toLowerCase())
+            .includes(courseName.toLowerCase())
+    ) {
+        return; // Skip adding the teacher if the course does not exist
+    }
+
+    // Check if the slot exists, if not, skip adding the teacher
+    if (isSlotExist(slotsInput) === false) {
+        return;
+    }
+
+    // Check if the teacher already exists for the course
+    if (
+        Object.keys(
+            timetableStoragePref[window.activeTable.id].subject[courseName]
+                .teacher,
+        )
+            .map((key) => key.toLowerCase())
+            .includes(teacherName.toLowerCase())
+    ) {
+        return; // Skip adding the teacher if they already exist
+    }
+
+    // If the slots or venue input is empty, use default values
+    slotsInput = slotsInput === '' ? 'SLOTS' : slotsInput;
+    venueInput = venueInput === '' ? 'VENUE' : venueInput;
+
+    // Add the teacher to the timetableStoragePref
+    timetableStoragePref[window.activeTable.id].subject[courseName].teacher[
+        teacherName
+    ] = {
+        slots: slotsInput,
+        venue: venueInput,
+        color: document.getElementById('color1-select').value, // Assuming color input is always valid
+    };
+
+    // Update UI to reflect the newly added teacher
+    const li = createTeacherLI({
+        courseName: courseName,
+        slots: slotsInput,
+        venue: venueInput,
+        color: document.getElementById('color1-select').value,
+        teacherName: teacherName,
+    });
+    li.addEventListener('click', liClick);
+    const dropdownDivs = document.querySelectorAll('.dropdown');
+    for (let dropdownDiv of dropdownDivs) {
+        const cname = dropdownDiv.querySelector('.cname');
+        if (cname && cname.textContent === courseName) {
+            const ul = dropdownDiv.querySelector('ul');
+            if (ul && ul.tagName === 'UL') {
+                ul.appendChild(li);
+            }
+            break; // Exit the loop once we've found the matching element
+        }
+    }
+}
+function addMultipleTeacher() {
+    // Get the textarea element
+    const textarea = document.getElementById('teachers-multiple-input');
+    const course = document.getElementById('course-select-add-teacher').value;
+    // Parse the text in the textarea to a list of values
+    const teacherList = parseTextToListForMultipleAdd(textarea.value);
+
+    // Iterate over the list of values
+    teacherList.forEach((values) => {
+        // Destructure the values into individual variables
+        const [slots, venue, faculty, ct] = values;
+
+        // Call the addTeacher function with the individual values
+        addTeacher(course, faculty, slots, venue);
+    });
+
+    // Clear the textarea after adding all teachers
+    textarea.value = '';
+    rearrangeTeacherRefresh();
+    updateLocalForage();
+}
 
 // To toggle the dropdown
 function toggleDropdown(dropdownHeading) {
@@ -1683,6 +1827,20 @@ function onPageLoad() {
     if (window.innerWidth < 631) {
         document.getElementById('mobile_message').style.display = 'block';
     }
+    var addMultipleTeacherButton =
+        document.getElementById('addMultipleTeacher');
+    addMultipleTeacherButton.addEventListener(
+        'click',
+        openModalConditionallyForMultipleTeacher,
+    );
+
+    var addConfirmMultipleTeacherButton = document.getElementById(
+        'confirm-multiple-button',
+    );
+    addConfirmMultipleTeacherButton.addEventListener(
+        'click',
+        addMultipleTeacher,
+    );
 }
 
 // replace all dots with empty string in input field

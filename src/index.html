@@ -740,6 +740,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                 </div>
                                 <div class="modal-footer">
                                     <button
+                                        class="btn btn-success"
+                                        type="button"
+                                        id="addMultipleTeacher"
+                                    >
+                                        <i class="fas fa-plus"></i>
+                                        <span
+                                            >&nbsp;&nbsp;Add Multiple</span
+                                        ></button
+                                    >&emsp13;
+                                    <button
                                         style="width: 30%"
                                         type="submit"
                                         class="btn btn-primary"
@@ -1243,7 +1253,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <div class="modal-body">
                         <p>
                             A new version of FFCS Planner is available! Would
-                            you like to reload the page?
+                            you like to reload the page? No data will be lost.
                         </p>
                     </div>
 
@@ -1431,6 +1441,60 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </div>
         </div>
         <!-- End of reset modal -->
+
+        <!-- The Add Multiple Teachers Modal -->
+        <div
+            id="multiple-teacher-modal"
+            class="modal fade"
+            tabindex="-1"
+            aria-labelledby="reset-modal-label"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="reset-modal-label">
+                            Add Multiple Teachers
+                        </h5>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <textarea
+                            class="form-control"
+                            id="teachers-multiple-input"
+                            placeholder="Copy the list from your VTOP course allocation and paste it here. And boom! All added at once."
+                            autocomplete="off"
+                            style="min-height: 100px"
+                        ></textarea>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            id="confirm-multiple-button"
+                            type="button"
+                            class="btn btn-primary"
+                            data-bs-dismiss="modal"
+                        >
+                            Add
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End of Add Multiple Teachers Modal -->
 
         <!-- The Switch Campus Modal -->
         <div
