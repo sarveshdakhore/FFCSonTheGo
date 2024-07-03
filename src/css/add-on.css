@@ -349,3 +349,7 @@ tr.sortable-chosen1 td {
         transition: none;
     }
 }
+
+#teachers-multiple-input::placeholder {
+    opacity: 0.4;
+}
