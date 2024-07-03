@@ -100,7 +100,7 @@ function addTeacher(courseName, teacherName, slotsInput, venueInput) {
     // Check if the teacher already exists
     if (teachers.includes(teacherName.toLowerCase())) {
         // If the teacher exists, append "2" to the teacher's name
-        teacherName += '2';
+        teacherName += ' 2';
     }
 
     // Proceed to add the teacher with the modified name
