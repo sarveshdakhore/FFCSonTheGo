@@ -155,6 +155,17 @@ function addMultipleTeacher() {
 
     // Clear the textarea after adding all teachers
     textarea.value = '';
+    spanTeacherAddSuccess = document.getElementById('span-teacher-add');
+    document.getElementById('hide_br').style.display = 'none';
+    // Set the error message properties
+    spanTeacherAddSuccess.style.color = 'green'; // Assuming 'red' is the error message color
+    spanTeacherAddSuccess.style.fontWeight = 'bolder';
+    spanTeacherAddSuccess.textContent = 'Teaches added successfully.';
+    // After 5 seconds, clear the message and show 'hide_br' again
+    setTimeout(() => {
+        spanTeacherAddSuccess.textContent = '';
+        document.getElementById('hide_br').style.display = 'inline';
+    }, 5000);
     rearrangeTeacherRefresh();
     updateLocalForage();
 }
@@ -1378,6 +1389,12 @@ function rearrangeTeacherLiInSubjectArea(courseName) {
     var consideredSlots = subtractArray(slotsOfCourse, activeSlots);
     var nonActiveTeacherLi = [];
     var activeTeacherLi = [];
+    var actGreen = [];
+    var actRed = [];
+    var actOrange = [];
+    var nactGreen = [];
+    var nactRed = [];
+    var nactOrange = [];
     allTeacherLi.forEach((teacherLi) => {
         const teacherSlot = slotsProcessingForCourseList(
             teacherLi.querySelectorAll('div')[1].innerText,
@@ -1395,11 +1412,50 @@ function rearrangeTeacherLiInSubjectArea(courseName) {
         }
     });
     // get the ul under that course name in subject area
-    ul.innerHTML = '';
     activeTeacherLi.forEach((teacherLi) => {
-        ul.appendChild(teacherLi);
+        var color = teacherLi.style.backgroundColor;
+        switch (color) {
+            case 'rgb(214, 255, 214)': // Green
+                return actGreen.push(teacherLi);
+            case 'rgb(255, 228, 135)': // Orange
+                return actOrange.push(teacherLi);
+            case 'rgb(255, 205, 205)': // Red
+                return actRed.push(teacherLi);
+            default:
+                return actGreen.push(teacherLi); // Unknown color
+        }
     });
     nonActiveTeacherLi.forEach((teacherLi) => {
+        color = teacherLi.style.backgroundColor;
+        switch (color) {
+            case 'rgb(214, 255, 214)': // Green
+                return nactGreen.push(teacherLi);
+            case 'rgb(255, 228, 135)': // Orange
+                return nactOrange.push(teacherLi);
+            case 'rgb(255, 205, 205)': // Red
+                return nactRed.push(teacherLi);
+            default:
+                return nactGreen.push(teacherLi); // Unknown color
+        }
+    });
+
+    ul.innerHTML = '';
+    actGreen.forEach((teacherLi) => {
+        ul.appendChild(teacherLi);
+    });
+    actOrange.forEach((teacherLi) => {
+        ul.appendChild(teacherLi);
+    });
+    actRed.forEach((teacherLi) => {
+        ul.appendChild(teacherLi);
+    });
+    nactGreen.forEach((teacherLi) => {
+        ul.appendChild(teacherLi);
+    });
+    nactOrange.forEach((teacherLi) => {
+        ul.appendChild(teacherLi);
+    });
+    nactRed.forEach((teacherLi) => {
         ul.appendChild(teacherLi);
     });
 }
@@ -1429,7 +1485,29 @@ function revertRerrange() {
             allSubject[subjectNameStr],
         );
         ulToUpdate.innerHTML = '';
+        var teacherLiGreen = [];
+        var teacherLiOrange = [];
+        var teacherLiRed = [];
         TeacherLi.forEach((li) => {
+            var color = li.style.backgroundColor;
+            switch (color) {
+                case 'rgb(214, 255, 214)': // Green
+                    return teacherLiGreen.push(li);
+                case 'rgb(255, 228, 135)': // Orange
+                    return teacherLiOrange.push(li);
+                case 'rgb(255, 205, 205)': // Red
+                    return teacherLiRed.push(li);
+                default:
+                    return teacherLiGreen.push(li); // Unknown color
+            }
+        });
+        teacherLiGreen.forEach((li) => {
+            ulToUpdate.appendChild(li);
+        });
+        teacherLiOrange.forEach((li) => {
+            ulToUpdate.appendChild(li);
+        });
+        teacherLiRed.forEach((li) => {
             ulToUpdate.appendChild(li);
         });
         makeRadioTrueOnPageLoad();
