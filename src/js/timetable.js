@@ -166,6 +166,7 @@ function addMultipleTeacher() {
         spanTeacherAddSuccess.textContent = '';
         document.getElementById('hide_br').style.display = 'inline';
     }, 5000);
+    updateDataJsonFromCourseList();
     revertRerrange();
     rearrangeTeacherRefresh();
     updateLocalForage();
