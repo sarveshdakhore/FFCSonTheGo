@@ -155,7 +155,7 @@ function addMultipleTeacher() {
 
     // Clear the textarea after adding all teachers
     textarea.value = '';
-    spanTeacherAddSuccess = document.getElementById('span-teacher-add');
+    var spanTeacherAddSuccess = document.getElementById('span-teacher-add');
     document.getElementById('hide_br').style.display = 'none';
     // Set the error message properties
     spanTeacherAddSuccess.style.color = 'green'; // Assuming 'red' is the error message color
@@ -166,6 +166,7 @@ function addMultipleTeacher() {
         spanTeacherAddSuccess.textContent = '';
         document.getElementById('hide_br').style.display = 'inline';
     }, 5000);
+    revertRerrange();
     rearrangeTeacherRefresh();
     updateLocalForage();
 }
