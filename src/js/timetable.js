@@ -2800,6 +2800,7 @@ function switchTable(tableId) {
  */
 function updatePickerLabel(tableName) {
     $('#tt-picker-button').text(tableName);
+    clearCourseList();
     fillPage();
     fillLeftBoxInCoursePanel();
     revertRerrange();
