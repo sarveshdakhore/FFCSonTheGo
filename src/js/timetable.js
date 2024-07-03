@@ -1540,6 +1540,12 @@ function rearrangeTeacherLiInSubjectAreaAttack(courseName) {
     var consideredSlots = subtractArray(slotsOfCourse, activeSlots);
     var nonActiveTeacherLi = [];
     var activeTeacherLi = [];
+    var attackActGreen = [];
+    var attackActRed = [];
+    var attackActOrange = [];
+    var attackNonActGreen = [];
+    var attackNonActRed = [];
+    var attackNonActOrange = [];
     allTeacherLi.forEach((teacherLi) => {
         const teacherSlot = slotsProcessingForCourseList(
             teacherLi.querySelectorAll('div')[1].innerText,
@@ -1559,14 +1565,53 @@ function rearrangeTeacherLiInSubjectAreaAttack(courseName) {
         }
     });
     // get the ul under that course name in subject area
-    ul.innerHTML = '';
     activeTeacherLi.forEach((teacherLi) => {
-        ul.appendChild(teacherLi);
+        var color = teacherLi.style.backgroundColor;
+        switch (color) {
+            case 'rgb(214, 255, 214)': // Green
+                return attackActGreen.push(teacherLi);
+            case 'rgb(255, 228, 135)': // Orange
+                return attackActOrange.push(teacherLi);
+            case 'rgb(255, 205, 205)': // Red
+                return attackActRed.push(teacherLi);
+            default:
+                return attackActGreen.push(teacherLi); // Unknown color
+        }
     });
     nonActiveTeacherLi.forEach((teacherLi) => {
+        color = teacherLi.style.backgroundColor;
+        switch (color) {
+            case 'rgb(214, 255, 214)': // Green
+                return attackNonActGreen.push(teacherLi);
+            case 'rgb(255, 228, 135)': // Orange
+                return attackNonActOrange.push(teacherLi);
+            case 'rgb(255, 205, 205)': // Red
+                return attackNonActRed.push(teacherLi);
+            default:
+                return attackNonActGreen.push(teacherLi); // Unknown color
+        }
+    });
+    ul.innerHTML = '';
+    attackActGreen.forEach((teacherLi) => {
+        ul.appendChild(teacherLi);
+    });
+    attackActOrange.forEach((teacherLi) => {
+        ul.appendChild(teacherLi);
+    });
+    attackActRed.forEach((teacherLi) => {
+        ul.appendChild(teacherLi);
+    });
+    attackNonActGreen.forEach((teacherLi) => {
+        ul.appendChild(teacherLi);
+    });
+    attackNonActOrange.forEach((teacherLi) => {
+        ul.appendChild(teacherLi);
+    });
+    attackNonActRed.forEach((teacherLi) => {
         ul.appendChild(teacherLi);
     });
 }
+
 // Make input radio true on the basis of attackData values
 function makeRadioTrueAttack() {
     var attackData = activeTable.attackData;
@@ -1586,11 +1631,33 @@ function revertRerrangeAttack() {
             subjectNameStr,
             allSubject[subjectNameStr],
         );
-        ulToUpdate.innerHTML = '';
+        var attackTeacherLiGreen = [];
+        var attackTeacherLiOrange = [];
+        var attackTeacherLiRed = [];
         TeacherLi.forEach((li) => {
-            ulToUpdate.appendChild(li);
+            var color = li.style.backgroundColor;
+            switch (color) {
+                case 'rgb(214, 255, 214)': // Green
+                    return attackTeacherLiGreen.push(li);
+                case 'rgb(255, 228, 135)': // Orange
+                    return attackTeacherLiOrange.push(li);
+                case 'rgb(255, 205, 205)': // Red
+                    return attackTeacherLiRed.push(li);
+                default:
+                    return attackTeacherLiGreen.push(li); // Unknown color
+            }
         });
 
+        ulToUpdate.innerHTML = '';
+        attackTeacherLiGreen.forEach((li) => {
+            ulToUpdate.appendChild(li);
+        });
+        attackTeacherLiOrange.forEach((li) => {
+            ulToUpdate.appendChild(li);
+        });
+        attackTeacherLiRed.forEach((li) => {
+            ulToUpdate.appendChild(li);
+        });
         makeRadioTrueAttack();
     });
 }
