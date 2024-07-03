@@ -61,7 +61,47 @@ function parseTextToListForMultipleAdd(text) {
 
     return resultList;
 }
+function checkTeacherAndSlotsMatch(courseName, teacherName, slots) {
+    const teachers =
+        timetableStoragePref[window.activeTable.id].subject[courseName].teacher;
+    const teacherSlots = teachers[teacherName]
+        ? teachers[teacherName].slots.split('+')
+        : [];
+
+    // Convert slots array to lowercase for comparison
+    const lowerCaseSlots = slots.map((slot) => slot.toLowerCase());
+    const lowerCaseTeacherSlots = teacherSlots.map((slot) =>
+        slot.toLowerCase(),
+    );
+
+    // Check if all slots match
+    const slotsMatch = lowerCaseSlots.every((slot) =>
+        lowerCaseTeacherSlots.includes(slot),
+    );
+
+    if (slotsMatch) {
+        // If teacher name and slots match, return the original teacher name
+        return teacherName;
+    } else {
+        // If not, generate a unique name
+        let uniqueName = teacherName;
+        let counter = 1;
+        const teacherNames = Object.keys(teachers).map((key) =>
+            key.toLowerCase(),
+        );
+
+        while (teacherNames.includes(uniqueName.toLowerCase())) {
+            counter++;
+            uniqueName = `${teacherName} ${counter}`;
+        }
+
+        return uniqueName;
+    }
+}
+
 function addTeacher(courseName, teacherName, slotsInput, venueInput) {
+    slotsInput = slotsInput.trim();
+    slotsInput = slotsInput.toUpperCase();
     // Check if the course or teacher name is empty, skip adding the teacher
     if (
         courseName === 'Select Course' ||
@@ -93,22 +133,20 @@ function addTeacher(courseName, teacherName, slotsInput, venueInput) {
 
     // Check if the teacher already exists for the course
     // Extract the current list of teachers for the course
+
     const teachers = Object.keys(
         timetableStoragePref[window.activeTable.id].subject[courseName].teacher,
     ).map((key) => key.toLowerCase());
-
-    let uniqueName = teacherName;
-    let counter = 1;
-
-    // Loop until a unique teacher name is found
-    while (teachers.includes(uniqueName.toLowerCase())) {
-        counter++;
-        uniqueName = `${teacherName} ${counter}`;
+    // Check if the teacher already exists for the course
+    let uniqueName = checkTeacherAndSlotsMatch(
+        courseName,
+        teacherName,
+        slotsInput.split('+'),
+    );
+    if (uniqueName == teacherName) {
+        return;
     }
     teacherName = uniqueName;
-
-    // Proceed to add the teacher with the modified name
-    // Note: Ensure that the logic for adding a teacher is implemented here
 
     // If the slots or venue input is empty, use default values
     slotsInput = slotsInput === '' ? 'SLOTS' : slotsInput;
@@ -282,13 +320,25 @@ function getTeacherLiInSubjectArea(courseName, teacherName) {
         }
     }
 }
+
+function parseCreditValue(input) {
+    let number = parseFloat(input);
+    if (!isNaN(number)) {
+        if (number % 1 !== 0) {
+            // Check if it's a float
+            return Number(number.toFixed(1));
+        }
+        return parseInt(number, 10); // It's an integer
+    }
+    return 0;
+}
 // function to get credits from course name in subject area
 function getCreditsFromCourseName(courseName) {
     var subjectArea = document.getElementById('subjectArea');
     var allSpan = subjectArea.querySelectorAll('.cname');
     for (const span of allSpan) {
         if (span.innerText.toLowerCase() === courseName.toLowerCase()) {
-            return parseInt(
+            return parseCreditValue(
                 span.parentElement.parentElement
                     .querySelector('h4')
                     .innerText.replace('[', '')
@@ -859,7 +909,7 @@ function createSubjectJsonFromHtml() {
         let courseName = courseNameElement
             ? courseNameElement.textContent
             : null;
-        let credits = parseInt(
+        let credits = parseCreditValue(
             dropdown
                 .querySelector('h4')
                 .textContent.replace('[', '')
@@ -911,7 +961,7 @@ function updateDataJsonFromCourseList() {
         let courseCode = td[1].innerText;
         let slots = slotsProcessingForCourseList(td[0].innerText);
         let venue = td[4].innerText;
-        let credits = parseInt(td[5].innerText);
+        let credits = parseCreditValue(td[5].innerText);
         let isProject = trElement.getAttribute('data-is-project');
         let dataCourseValue = trElement.getAttribute('data-course');
         let courseId = Number(dataCourseValue.split(/(\d+)/)[1]);
@@ -1275,7 +1325,7 @@ function editPref() {
                 let credit = this.querySelector('h4')
                     .innerText.replace('[', '')
                     .replace(']', '');
-                credit = parseInt(credit);
+                credit = parseCreditValue(credit);
                 let courseDiv = document.getElementById('div-for-edit-course');
                 selectBackgroundRemovalOfPreviousH2s();
                 // add class to this
@@ -3334,7 +3384,7 @@ document
             .value.trim();
 
         courseName = processRawCourseName(courseName);
-        const credits = parseInt(
+        const credits = parseCreditValue(
             document.getElementById('credits-input').value.trim(),
         );
 
@@ -3609,7 +3659,7 @@ document
         var courseName = processRawCourseName(
             courseDiv.querySelector('#course-input_edit').value.trim(),
         );
-        var credits = parseInt(
+        var credits = parseCreditValue(
             courseDiv.querySelector('#credits-input-edit').value,
         );
         var courseNamePre = courseDiv.querySelector(
