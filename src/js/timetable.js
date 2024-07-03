@@ -138,13 +138,13 @@ function addTeacher(courseName, teacherName, slotsInput, venueInput) {
         timetableStoragePref[window.activeTable.id].subject[courseName].teacher,
     ).map((key) => key.toLowerCase());
     // Check if the teacher already exists for the course
-    let uniqueName = checkTeacherAndSlotsMatch(
-        courseName,
-        teacherName,
-        slotsInput.split('+'),
-    );
-    if (uniqueName == teacherName) {
-        return;
+    let uniqueName = teacherName;
+    let counter = 1;
+
+    // Loop until a unique teacher name is found
+    while (teachers.includes(uniqueName.toLowerCase())) {
+        counter++;
+        uniqueName = `${teacherName} ${counter}`;
     }
     teacherName = uniqueName;
 
