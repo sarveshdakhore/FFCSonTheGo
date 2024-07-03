@@ -92,16 +92,19 @@ function addTeacher(courseName, teacherName, slotsInput, venueInput) {
     }
 
     // Check if the teacher already exists for the course
-    // if (
-    //     Object.keys(
-    //         timetableStoragePref[window.activeTable.id].subject[courseName]
-    //             .teacher,
-    //     )
-    //         .map((key) => key.toLowerCase())
-    //         .includes(teacherName.toLowerCase())
-    // ) {
-    //     return; // Skip adding the teacher if they already exist
-    // }
+    // Extract the current list of teachers for the course
+    const teachers = Object.keys(
+        timetableStoragePref[window.activeTable.id].subject[courseName].teacher,
+    ).map((key) => key.toLowerCase());
+
+    // Check if the teacher already exists
+    if (teachers.includes(teacherName.toLowerCase())) {
+        // If the teacher exists, append "2" to the teacher's name
+        teacherName += '2';
+    }
+
+    // Proceed to add the teacher with the modified name
+    // Note: Ensure that the logic for adding a teacher is implemented here
 
     // If the slots or venue input is empty, use default values
     slotsInput = slotsInput === '' ? 'SLOTS' : slotsInput;
