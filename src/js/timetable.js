@@ -92,16 +92,16 @@ function addTeacher(courseName, teacherName, slotsInput, venueInput) {
     }
 
     // Check if the teacher already exists for the course
-    if (
-        Object.keys(
-            timetableStoragePref[window.activeTable.id].subject[courseName]
-                .teacher,
-        )
-            .map((key) => key.toLowerCase())
-            .includes(teacherName.toLowerCase())
-    ) {
-        return; // Skip adding the teacher if they already exist
-    }
+    // if (
+    //     Object.keys(
+    //         timetableStoragePref[window.activeTable.id].subject[courseName]
+    //             .teacher,
+    //     )
+    //         .map((key) => key.toLowerCase())
+    //         .includes(teacherName.toLowerCase())
+    // ) {
+    //     return; // Skip adding the teacher if they already exist
+    // }
 
     // If the slots or venue input is empty, use default values
     slotsInput = slotsInput === '' ? 'SLOTS' : slotsInput;
@@ -1428,7 +1428,7 @@ function rearrangeTeacherLiInSubjectArea(courseName) {
         }
     });
     nonActiveTeacherLi.forEach((teacherLi) => {
-        color = teacherLi.style.backgroundColor;
+        var color = teacherLi.style.backgroundColor;
         switch (color) {
             case 'rgb(214, 255, 214)': // Green
                 return nactGreen.push(teacherLi);
@@ -1579,7 +1579,7 @@ function rearrangeTeacherLiInSubjectAreaAttack(courseName) {
         }
     });
     nonActiveTeacherLi.forEach((teacherLi) => {
-        color = teacherLi.style.backgroundColor;
+        var color = teacherLi.style.backgroundColor;
         switch (color) {
             case 'rgb(214, 255, 214)': // Green
                 return attackNonActGreen.push(teacherLi);
