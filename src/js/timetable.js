@@ -64,38 +64,51 @@ function parseTextToListForMultipleAdd(text) {
 function checkTeacherAndSlotsMatch(courseName, teacherName, slots) {
     const teachers =
         timetableStoragePref[window.activeTable.id].subject[courseName].teacher;
-    const teacherSlots = teachers[teacherName]
-        ? teachers[teacherName].slots.split('+')
-        : [];
 
-    // Convert slots array to lowercase for comparison
-    const lowerCaseSlots = slots.map((slot) => slot.toLowerCase());
-    const lowerCaseTeacherSlots = teacherSlots.map((slot) =>
-        slot.toLowerCase(),
-    );
-
-    // Check if all slots match
-    const slotsMatch = lowerCaseSlots.every((slot) =>
-        lowerCaseTeacherSlots.includes(slot),
-    );
-
-    if (slotsMatch) {
-        // If teacher name and slots match, return the original teacher name
-        return teacherName;
-    } else {
-        // If not, generate a unique name
-        let uniqueName = teacherName;
-        let counter = 1;
-        const teacherNames = Object.keys(teachers).map((key) =>
-            key.toLowerCase(),
+    // Helper function to check if slots match
+    function doSlotsMatch(teacherSlots, inputSlots) {
+        const lowerCaseInputSlots = inputSlots.map((slot) =>
+            slot.toLowerCase(),
         );
+        const lowerCaseTeacherSlots = teacherSlots.map((slot) =>
+            slot.toLowerCase(),
+        );
+        return lowerCaseInputSlots.every((slot) =>
+            lowerCaseTeacherSlots.includes(slot),
+        );
+    }
 
-        while (teacherNames.includes(uniqueName.toLowerCase())) {
-            counter++;
-            uniqueName = `${teacherName} ${counter}`;
+    // Recursive helper function to generate a unique name and check slots
+    function generateUniqueNameAndCheckSlots(baseName, counter = 1) {
+        let uniqueName = counter === 1 ? baseName : `${baseName} ${counter}`;
+        const uniqueNameSlots = teachers[uniqueName]
+            ? teachers[uniqueName].slots.split('+')
+            : [];
+
+        if (doSlotsMatch(uniqueNameSlots, slots)) {
+            // If the slots match, return false
+            return false;
+        } else if (teachers.hasOwnProperty(uniqueName)) {
+            // If the unique name already exists, recurse with incremented counter
+            return generateUniqueNameAndCheckSlots(baseName, counter + 1);
+        } else {
+            // If the unique name is truly unique and slots don't match, return the unique name
+            return uniqueName;
         }
+    }
 
-        return uniqueName;
+    // Initial check for the provided teacher name
+    if (
+        doSlotsMatch(
+            teachers[teacherName] ? teachers[teacherName].slots.split('+') : [],
+            slots,
+        )
+    ) {
+        // If the original teacher's slots match the input slots, return false
+        return false;
+    } else {
+        // If the original teacher's slots don't match, attempt to generate a unique name
+        return generateUniqueNameAndCheckSlots(teacherName);
     }
 }
 
@@ -138,13 +151,13 @@ function addTeacher(courseName, teacherName, slotsInput, venueInput) {
         timetableStoragePref[window.activeTable.id].subject[courseName].teacher,
     ).map((key) => key.toLowerCase());
     // Check if the teacher already exists for the course
-    let uniqueName = teacherName;
-    let counter = 1;
-
-    // Loop until a unique teacher name is found
-    while (teachers.includes(uniqueName.toLowerCase())) {
-        counter++;
-        uniqueName = `${teacherName} ${counter}`;
+    let uniqueName = checkTeacherAndSlotsMatch(
+        courseName,
+        teacherName,
+        slotsInput.split('+'),
+    );
+    if (uniqueName == false) {
+        return;
     }
     teacherName = uniqueName;
 
