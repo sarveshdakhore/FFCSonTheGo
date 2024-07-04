@@ -127,3 +127,20 @@ window.resetPage = () => {
 /*
     Prompt add to home screen
  */
+window.addEventListener('beforeinstallprompt', (e) => {
+    ga('send', {
+        hitType: 'event',
+        eventCategory: 'A2H',
+        eventAction: 'Seen',
+        eventLabel: `A2H Shown`,
+    });
+
+    e.userChoice.then((choiceResult) => {
+        ga('send', {
+            hitType: 'event',
+            eventCategory: 'A2H',
+            eventAction: 'click',
+            eventLabel: `A2H ${choiceResult.outcome}`,
+        });
+    });
+});
