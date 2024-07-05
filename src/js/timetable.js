@@ -3443,7 +3443,7 @@ document
         if (
             courseName === '' ||
             isNaN(credits) ||
-            credits < 1 ||
+            credits < 0 ||
             credits > 30
         ) {
             if (courseName === '' && isNaN(credits)) {
@@ -3456,7 +3456,7 @@ document
                 spanMsg = 'Credits is empty';
                 spanMsgColor = 'red';
             } else {
-                spanMsg = 'Credits should be between 1 and 30';
+                spanMsg = 'Credits should be between 0 and 30';
                 spanMsgColor = 'red';
             }
         } else {
