@@ -3697,14 +3697,14 @@ document
                 '' ||
             creditsInput === '' ||
             isNaN(creditsInput) ||
-            creditsInput < 1 ||
+            creditsInput < 0 ||
             creditsInput > 30
         ) {
             if (creditsInput === '' || isNaN(creditsInput)) {
                 spanMsg = 'Credits cannot be empty';
                 spanMsgColor = 'red';
-            } else if (creditsInput < 1 || creditsInput > 30) {
-                spanMsg = 'Credits should be between 1 and 30';
+            } else if (creditsInput < 0 || creditsInput > 30) {
+                spanMsg = 'Credits should be between 0 and 30';
                 spanMsgColor = 'red';
             }
         } else {
