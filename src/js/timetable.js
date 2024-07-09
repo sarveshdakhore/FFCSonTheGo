@@ -2450,7 +2450,6 @@ $(() => {
         }
 
         renameTable(tableId, tableName);
-        location.reload();
     });
 
     /*
@@ -2794,6 +2793,11 @@ function switchTable(tableId) {
     resetPage();
     activeTable = timetableStoragePref[getTableIndex(tableId)];
     updatePickerLabel(activeTable.name);
+    fillPage();
+    fillLeftBoxInCoursePanel();
+    revertRerrange();
+    closeEditPref();
+    closeEditPref1();
 }
 
 /*
@@ -2801,11 +2805,6 @@ function switchTable(tableId) {
  */
 function updatePickerLabel(tableName) {
     $('#tt-picker-button').text(tableName);
-    fillPage();
-    fillLeftBoxInCoursePanel();
-    revertRerrange();
-    closeEditPref();
-    closeEditPref1();
 }
 
 /*
