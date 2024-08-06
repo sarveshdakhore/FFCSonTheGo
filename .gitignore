@@ -8,3 +8,8 @@ util/output*.json
 yarn-error.log
 venv
 nodeenv
+util/._output_chennai.json
+util/._output_vellore.json
+src/._data
+._.parcel-cache
+._dist
