@@ -2058,7 +2058,6 @@ function onPageLoad() {
         'click',
         addMultipleTeacher,
     );
-    switchTable(activeTable.id);
 }
 
 // replace all dots with empty string in input field
