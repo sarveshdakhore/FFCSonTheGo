@@ -2036,10 +2036,6 @@ function showAddTeacherDiv() {
 }
 
 function onPageLoad() {
-    fillPage();
-    fillLeftBoxInCoursePanel();
-    activateSortableForCourseList();
-    addEventListnerToCourseList();
     // if window size is less then 630 show mobile_message
     if (window.innerWidth < 631) {
         document.getElementById('mobile_message').style.display = 'block';
@@ -3249,7 +3245,11 @@ window.initializeTimetable = () => {
             activeTable = timetableStoragePref[0];
 
             updatePickerLabel(activeTable.name);
-
+            fillPage();
+            fillLeftBoxInCoursePanel();
+            showAddTeacherDiv();
+            activateSortableForCourseList();
+            addEventListnerToCourseList();
             // Renaming the 'Default Table' option
             $('#tt-picker-dropdown .tt-picker-label a')
                 .first()
