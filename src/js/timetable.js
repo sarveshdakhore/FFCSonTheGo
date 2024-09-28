@@ -4,10 +4,10 @@ let {
     editSub,
     editTeacher,
     sortableIsActive,
-    ttDataStructureInLFormat,
     slotsExistInNonLectureFormat,
+    clashMap,
 } = globalVars;
-window.ttDataStructureInLFormat = ttDataStructureInLFormat;
+window.clashMap = clashMap;
 // push '' and 'SLOTS' in slotsExistInNonLectureFormat
 slotsExistInNonLectureFormat.add('');
 slotsExistInNonLectureFormat.add('SLOTS');
@@ -527,38 +527,38 @@ function activateSortableForCourseList() {
 // from this function we got the ttDataStructureInLFormat
 // Not in use, (Dead Function)
 // to generate the ttDataStructureInLFormat use it when courselist is empty
-function getCourseTTDataObject() {
-    const timetableTable = document.querySelector('.table-bordered');
-    const rows = timetableTable.querySelectorAll('tr');
+// function getCourseTTDataObject() {
+//     const timetableTable = document.querySelector('.table-bordered');
+//     const rows = timetableTable.querySelectorAll('tr');
 
-    const timetable = {};
+//     const timetable = {};
 
-    rows.forEach((row) => {
-        const cells = row.querySelectorAll('td.period'); // Only select cells with class 'period'
+//     rows.forEach((row) => {
+//         const cells = row.querySelectorAll('td.period'); // Only select cells with class 'period'
 
-        if (cells.length > 0) {
-            // Check if cells array is not empty
-            const day = cells[0].textContent.trim();
+//         if (cells.length > 0) {
+//             // Check if cells array is not empty
+//             const day = cells[0].textContent.trim();
 
-            for (let i = 0; i < cells.length; i++) {
-                // Start from 0 to include all periods
-                const period = cells[i].textContent.trim();
-                if (period) {
-                    const [course, lab] = period.split('/');
-                    const courseTrimmed = course ? course.trim() : '';
-                    const labTrimmed = lab ? lab.trim() : '';
+//             for (let i = 0; i < cells.length; i++) {
+//                 // Start from 0 to include all periods
+//                 const period = cells[i].textContent.trim();
+//                 if (period) {
+//                     const [course, lab] = period.split('/');
+//                     const courseTrimmed = course ? course.trim() : '';
+//                     const labTrimmed = lab ? lab.trim() : '';
 
-                    if (labTrimmed) {
-                        timetable[labTrimmed] = courseTrimmed;
-                    } else {
-                        timetable[courseTrimmed] = courseTrimmed;
-                    }
-                }
-            }
-        }
-    });
-    return timetable;
-}
+//                     if (labTrimmed) {
+//                         timetable[labTrimmed] = courseTrimmed;
+//                     } else {
+//                         timetable[courseTrimmed] = courseTrimmed;
+//                     }
+//                 }
+//             }
+//         }
+//     });
+//     return timetable;
+// }
 
 // check whether the slots exist in non lecture format
 // if exist return true else false
@@ -602,40 +602,23 @@ function updateSlots(slots) {
     var thSlots = [];
     var labSlots = [];
     allSlots.forEach((slot) => {
-        if (slot.includes('L')) {
-            labSlots.push(slot);
-            if (slot in ttDataStructureInLFormat) {
-                if (slot != ttDataStructureInLFormat[slot]) {
-                    thSlots.push(ttDataStructureInLFormat[slot]);
+        if (clashMap[slot]) {
+            if (slot.includes('L')) {
+                labSlots.push(clashMap[slot]);
+            } else {
+                thSlots.push(clashMap[slot]);
+            }
+            for (var i = 0; i < clashMap[slot].length; i++) {
+                if (clashMap[slot][i].includes('L')) {
+                    labSlots.push(clashMap[slot][i]);
+                } else {
+                    thSlots.push(clashMap[slot][i]);
                 }
             }
-        } else if (slot.includes('V')) {
-            var vSlotLec = findLec(slot);
-            if (vSlotLec[0] != slot) {
-                labSlots.push(vSlotLec[0]);
-            }
-            thSlots.push(slot);
-        } else {
-            thSlots.push(slot);
-            var lSlots = findLec(slot);
-            lSlots.forEach((lSlot) => {
-                labSlots.push(lSlot);
-            });
         }
     });
 
     return thSlots.concat(labSlots);
-}
-
-// return array of lecture associated with theory
-function findLec(value) {
-    var keys = [];
-    for (var key in ttDataStructureInLFormat) {
-        if (ttDataStructureInLFormat[key] === value) {
-            keys.push(key);
-        }
-    }
-    return keys;
 }
 
 // make the list of all slots in the activeTabe.data
@@ -1899,23 +1882,18 @@ function slotOccupiedTheoryLab() {
     allSlots.forEach((slot) => {
         if (slot.includes('L')) {
             labSlots.add(slot);
-            if (slot in ttDataStructureInLFormat) {
-                if (slot != ttDataStructureInLFormat[slot]) {
-                    thSlots.add(ttDataStructureInLFormat[slot]);
-                }
+            if (slot in clashMap) {
+                clashMap[slot].forEach((lec) => {
+                    thSlots.add(lec);
+                });
             }
-        } else if (slot.includes('V')) {
-            var vSlotLec = findLec(slot);
-            if (vSlotLec[0] != slot) {
-                labSlots.add(vSlotLec[0]);
-            }
-            thSlots.add(slot);
         } else {
             thSlots.add(slot);
-            var lSlots = findLec(slot);
-            lSlots.forEach((lSlot) => {
-                labSlots.add(lSlot);
-            });
+            if (slot in clashMap) {
+                clashMap[slot].forEach((lec) => {
+                    labSlots.add(lec);
+                });
+            }
         }
     });
     if (
@@ -1931,21 +1909,28 @@ function slotOccupiedTheoryLab() {
             if (x.length == 1) {
                 if (x[0].includes('L')) {
                     labSlots.add(x[0]);
+                    if (x[0] in clashMap) {
+                        clashMap[x[0]].forEach((lec) => {
+                            thSlots.add(lec);
+                        });
+                    }
                 } else {
                     thSlots.add(x[0]);
                 }
             } else {
                 labSlots.add(x[1].split('\n')[0]);
-                thSlots.add(x[0]);
+                if (x[1].split('\n')[0] in clashMap) {
+                    clashMap[x[1].split('\n')[0]].forEach((lec) => {
+                        thSlots.add(lec);
+                    });
+                }
             }
         });
     }
-
     const thSlotsArray = Array.from(thSlots).sort();
     const labSlotsArray = Array.from(labSlots).sort();
     return [thSlotsArray, labSlotsArray];
 }
-
 function showOccupiedSlots() {
     const slotsThLab = slotOccupiedTheoryLab();
     const thSlots = slotsThLab[0];
