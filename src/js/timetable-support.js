@@ -10,7 +10,7 @@ var attackQuick = [];
 // to convert them into one format(Lecture To Theory)
 // for proceesing in rearrangement
 
-var slotsExistInNonLectureFormat = new set([
+var slotsExistInNonLectureFormat = new Set([
     'L1',
     'A1',
     'L2',
