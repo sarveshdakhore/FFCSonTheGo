@@ -2417,7 +2417,7 @@ window.clearCourseList = () => {
 import localforage from 'localforage/dist/localforage';
 import html2canvas from 'html2canvas/dist/html2canvas';
 import { parse, isValid, add } from 'date-fns';
-import { fi, te, th } from 'date-fns/locale';
+import { fi, is, te, th } from 'date-fns/locale';
 import { get } from 'jquery';
 
 var timetableStoragePref = [
@@ -3143,7 +3143,20 @@ function initializeQuickVisualization() {
         } else {
             var activeQuick = activeTable.quick;
         }
+
         var slot = this.classList[0].split('-')[0];
+
+        var textContent = $(this).text();
+        var slots = textContent.split(' / ');
+        var labSlots = slots.filter((slot) => slot.startsWith('L'));
+        var isHighlighted = $(this).hasClass('highlight');
+        if (
+            isCommonSlot(labSlots, slotsForAttack()) &&
+            !isHighlighted &&
+            $('#attack-toggle').is(':checked')
+        ) {
+            return;
+        }
 
         if (
             $('#quick-toggle').attr('data-state') == 'enabled' &&
