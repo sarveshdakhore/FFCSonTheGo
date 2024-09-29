@@ -10,7 +10,7 @@ var attackQuick = [];
 // to convert them into one format(Lecture To Theory)
 // for proceesing in rearrangement
 
-var slotsExistInNonLectureFormat = [
+var slotsExistInNonLectureFormat = new set([
     'L1',
     'A1',
     'L2',
@@ -126,7 +126,7 @@ var slotsExistInNonLectureFormat = [
     'TDD2',
     'L60',
     'V7',
-];
+]);
 
 // ##################### Exporting Global Variables #####################
 

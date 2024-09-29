@@ -8,7 +8,8 @@ let {
     clashMap,
 } = globalVars;
 window.clashMap = clashMap;
-// push '' and 'SLOTS' in slotsExistInNonLectureFormat
+// add '' and 'SLOTS' in slotsExistInNonLectureFormat
+// Assuming slotsExistInNonLectureFormat is a Set
 slotsExistInNonLectureFormat.add('');
 slotsExistInNonLectureFormat.add('SLOTS');
 
