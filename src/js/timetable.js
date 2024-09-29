@@ -605,9 +605,9 @@ function updateSlots(slots) {
     allSlots.forEach((slot) => {
         if (clashMap[slot]) {
             if (slot.includes('L')) {
-                labSlots.push(clashMap[slot]);
+                labSlots.push(slot);
             } else {
-                thSlots.push(clashMap[slot]);
+                thSlots.push(slot);
             }
             for (var i = 0; i < clashMap[slot].length; i++) {
                 if (clashMap[slot][i].includes('L')) {
@@ -618,7 +618,6 @@ function updateSlots(slots) {
             }
         }
     });
-
     return thSlots.concat(labSlots);
 }
 
@@ -1723,7 +1722,10 @@ function slotsForAttack() {
     for (var i = 0; i < attackData.length; i++) {
         slots = slots.concat(attackData[i].slots);
     }
+    var thSlots = new Set();
+    var labSlots = new Set();
     slots = updateSlots(slots);
+    // traversing through quick slots and adding them to slots
     if (
         document.getElementById('quick-toggle').getAttribute('data-state') ===
         'enabled'
@@ -1734,15 +1736,51 @@ function slotsForAttack() {
                 .getElementsByTagName('tr');
             var cells = rows[el[0]].getElementsByTagName('td');
             const x = cells[el[1]].innerText.split(' / ');
-            if (x.length == 1) {
-                slots.push(x[0]);
+            if (el.length == 3) {
+                if (x.length == 1) {
+                    if (x[0].includes('L')) {
+                        labSlots.add(x[0]);
+                    } else {
+                        thSlots.add(x[0]);
+                        if (x[0] in clashMap) {
+                            clashMap[x[0]].forEach((lec) => {
+                                labSlots.add(lec);
+                            });
+                        }
+                    }
+                } else {
+                    thSlots.add(x[0]);
+                    if (x[0] in clashMap) {
+                        clashMap[x[0]].forEach((lec) => {
+                            labSlots.add(lec);
+                        });
+                    }
+                }
             } else {
-                slots.push(x[0]);
-                slots.push(x[1].split('\n')[0]);
+                if (x.length == 1) {
+                    if (x[0].includes('L')) {
+                        labSlots.add(x[0]);
+                        if (x[0] in clashMap) {
+                            clashMap[x[0]].forEach((lec) => {
+                                thSlots.add(lec);
+                            });
+                        }
+                    } else {
+                        thSlots.add(x[0]);
+                    }
+                } else {
+                    labSlots.add(x[1].split('\n')[0]);
+                    if (x[1].split('\n')[0] in clashMap) {
+                        clashMap[x[1].split('\n')[0]].forEach((lec) => {
+                            thSlots.add(lec);
+                        });
+                    }
+                }
             }
         });
     }
-
+    slots = slots.concat(Array.from(thSlots));
+    slots = slots.concat(Array.from(labSlots));
     return slots;
 }
 
@@ -1907,23 +1945,45 @@ function slotOccupiedTheoryLab() {
                 .getElementsByTagName('tr');
             var cells = rows[el[0]].getElementsByTagName('td');
             const x = cells[el[1]].innerText.split(' / ');
-            if (x.length == 1) {
-                if (x[0].includes('L')) {
-                    labSlots.add(x[0]);
-                    if (x[0] in clashMap) {
-                        clashMap[x[0]].forEach((lec) => {
-                            thSlots.add(lec);
-                        });
+            if (el.length == 3) {
+                if (x.length == 1) {
+                    if (x[0].includes('L')) {
+                        labSlots.add(x[0]);
+                    } else {
+                        thSlots.add(x[0]);
+                        if (x[0] in clashMap) {
+                            clashMap[x[0]].forEach((lec) => {
+                                labSlots.add(lec);
+                            });
+                        }
                     }
                 } else {
                     thSlots.add(x[0]);
+                    if (x[0] in clashMap) {
+                        clashMap[x[0]].forEach((lec) => {
+                            labSlots.add(lec);
+                        });
+                    }
                 }
             } else {
-                labSlots.add(x[1].split('\n')[0]);
-                if (x[1].split('\n')[0] in clashMap) {
-                    clashMap[x[1].split('\n')[0]].forEach((lec) => {
-                        thSlots.add(lec);
-                    });
+                if (x.length == 1) {
+                    if (x[0].includes('L')) {
+                        labSlots.add(x[0]);
+                        if (x[0] in clashMap) {
+                            clashMap[x[0]].forEach((lec) => {
+                                thSlots.add(lec);
+                            });
+                        }
+                    } else {
+                        thSlots.add(x[0]);
+                    }
+                } else {
+                    labSlots.add(x[1].split('\n')[0]);
+                    if (x[1].split('\n')[0] in clashMap) {
+                        clashMap[x[1].split('\n')[0]].forEach((lec) => {
+                            thSlots.add(lec);
+                        });
+                    }
                 }
             }
         });
@@ -2995,32 +3055,55 @@ function initializeQuickVisualization() {
 
     $('.quick-buttons *[class*="-tile"]').on('click', function () {
         var activeQuick;
+        // Get the theory text in button
+        var theoryText = [];
+        theoryText.push($(this).text());
+        theoryText = theoryText;
 
-        if ($('#attack-toggle').is(':checked')) {
-            activeQuick = activeTable.attackQuick;
-        } else {
-            activeQuick = activeTable.quick;
-        }
         var slot = this.classList[0].split('-')[0];
-
+        var isHighlighted = $(this).hasClass('highlight');
         if (
-            !$(`#timetable .${slot}`).hasClass('clash') &&
-            $(`#timetable .${slot}`).children('div').length == 0
+            !isCommonSlot(theoryText, slotsForAttack()) ||
+            isHighlighted ||
+            !$('#attack-toggle').is(':checked')
         ) {
-            var slots = [];
+            if ($('#attack-toggle').is(':checked')) {
+                activeQuick = activeTable.attackQuick;
+            } else {
+                activeQuick = activeTable.quick;
+            }
 
-            $(`#timetable .${slot}`).each((i, el) => {
-                var row = $(el).parent().index();
-                var column = $(el).index();
+            if (
+                !$(`#timetable .${slot}`).hasClass('clash') &&
+                $(`#timetable .${slot}`).children('div').length == 0
+            ) {
+                var slots = [];
 
-                slots.push([row, column]);
-            });
+                $(`#timetable .${slot}`).each((i, el) => {
+                    var row = $(el).parent().index();
+                    var column = $(el).index();
 
-            if ($(this).hasClass('highlight')) {
-                $(`#timetable .${slot}`).removeClass('highlight');
-                if ($('#attack-toggle').is(':checked')) {
-                    activeTable.attackQuick = activeTable.attackQuick.filter(
-                        (el) => {
+                    slots.push([row, column, true]);
+                });
+
+                if (isHighlighted) {
+                    $(`#timetable .${slot}`).removeClass('highlight');
+                    if ($('#attack-toggle').is(':checked')) {
+                        activeTable.attackQuick =
+                            activeTable.attackQuick.filter((el) => {
+                                for (var i = 0; i < slots.length; ++i) {
+                                    if (
+                                        el[0] == slots[i][0] &&
+                                        el[1] == slots[i][1]
+                                    ) {
+                                        return false;
+                                    }
+                                }
+
+                                return true;
+                            });
+                    } else {
+                        activeTable.quick = activeTable.quick.filter((el) => {
                             for (var i = 0; i < slots.length; ++i) {
                                 if (
                                     el[0] == slots[i][0] &&
@@ -3031,32 +3114,23 @@ function initializeQuickVisualization() {
                             }
 
                             return true;
-                        },
-                    );
+                        });
+                    }
                 } else {
-                    activeTable.quick = activeTable.quick.filter((el) => {
-                        for (var i = 0; i < slots.length; ++i) {
-                            if (el[0] == slots[i][0] && el[1] == slots[i][1]) {
-                                return false;
-                            }
-                        }
-
-                        return true;
-                    });
+                    $(`#timetable .${slot}`).addClass('highlight');
+                    activeQuick.push(...slots);
                 }
-            } else {
-                $(`#timetable .${slot}`).addClass('highlight');
-                activeQuick.push(...slots);
+
+                $(this).toggleClass('highlight');
+
+                updateLocalForage();
             }
 
-            $(this).toggleClass('highlight');
-
-            updateLocalForage();
-        }
-        if (document.getElementById('attack-toggle').checked) {
-            revertRerrangeAttack();
-            rearrangeTeacherRefreshAttack();
-            showOccupiedSlots();
+            if (document.getElementById('attack-toggle').checked) {
+                revertRerrangeAttack();
+                rearrangeTeacherRefreshAttack();
+                showOccupiedSlots();
+            }
         }
     });
 
@@ -4177,6 +4251,7 @@ document
             if (!confirm('Are you sure you want to clear the course list?')) {
                 return;
             }
+            clearTimetable();
             getCourseListFromSubjectArea().forEach((courseName) => {
                 courseRemove(courseName);
             });

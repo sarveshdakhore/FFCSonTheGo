@@ -13,3 +13,5 @@ util/._output_vellore.json
 src/._data
 ._.parcel-cache
 ._dist
+._yarn.lock
+._node_modules
