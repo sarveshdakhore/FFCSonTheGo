@@ -15,3 +15,4 @@ src/._data
 ._dist
 ._yarn.lock
 ._node_modules
+src/js/._timetable.js
