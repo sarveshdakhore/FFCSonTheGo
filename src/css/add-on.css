@@ -353,3 +353,15 @@ tr.sortable-chosen1 td {
 #teachers-multiple-input::placeholder {
     opacity: 0.4;
 }
+
+/* Default height for mobile devices */
+#teachers-multiple-input {
+    min-height: 100px;
+}
+
+/* Height for larger screens */
+@media (min-width: 768px) {
+    #teachers-multiple-input {
+        min-height: 400px;
+    }
+}
