@@ -92,11 +92,6 @@ function checkTeacherAndSlotsMatch(courseName, teacherName, slotString) {
         } else if (teachers.hasOwnProperty(uniqueName)) {
             // If the unique name already exists, check for slots merge property
             let Tslots = getTeacherSlots(courseName, teacherName);
-            console.log('0', courseName, teacherName);
-            console.log('1', Tslots);
-            console.log('2', slotString);
-            console.log('3', isTheory(Tslots), !isTheory(slotString));
-            console.log('4', !isTheory(Tslots), isTheory(slotString));
 
             if (isTheory(Tslots) && !isTheory(slotString)) {
                 if (isMorningTheory(Tslots) && !isMorningLab(slotString)) {
@@ -105,7 +100,7 @@ function checkTeacherAndSlotsMatch(courseName, teacherName, slotString) {
                         teacherName,
                         Tslots + '+' + slotString,
                     );
-                    return false;
+                    return true;
                 } else if (
                     !isMorningTheory(Tslots) &&
                     isMorningLab(slotString)
@@ -115,7 +110,7 @@ function checkTeacherAndSlotsMatch(courseName, teacherName, slotString) {
                         teacherName,
                         Tslots + '+' + slotString,
                     );
-                    return false;
+                    return true;
                 }
             } else if (!isTheory(Tslots) && isTheory(slotString)) {
                 if (isMorningTheory(slotString) && !isMorningLab(Tslots)) {
@@ -124,7 +119,7 @@ function checkTeacherAndSlotsMatch(courseName, teacherName, slotString) {
                         teacherName,
                         slotString + '+' + Tslots,
                     );
-                    return false;
+                    return true;
                 } else if (
                     !isMorningTheory(slotString) &&
                     isMorningLab(Tslots)
@@ -134,7 +129,7 @@ function checkTeacherAndSlotsMatch(courseName, teacherName, slotString) {
                         teacherName,
                         slotString + '+' + Tslots,
                     );
-                    return false;
+                    return true;
                 }
             }
             //recurse with incremented counter
@@ -167,15 +162,42 @@ function isTheory(slots) {
     return false;
 }
 function isMorningTheory(slots) {
-    let slot = slots.split('+')[0];
-    if (slot.includes('V')) {
-        const num = parseInt(slot.slice(1));
-        return number === 1 || number === 2;
-    } else if (slot.match(/[A-ULW-Z]\d+/)) {
-        // Check if it's a theory slot and ends with '1' (morning theory)
-        return slot.endsWith('1');
+    let isMTheory = null;
+    let slotArray = slots.split('+');
+    for (let slot of slotArray) {
+        slot = slot.trim();
+        if (slot.includes('V')) {
+            const num = parseInt(slot.slice(1));
+            if (num === 1 || num === 2) {
+                if (isMTheory === false) {
+                    return null;
+                }
+                isMTheory = true;
+            }
+        } else if (slot.startsWith('L')) {
+            const num = parseInt(slot.slice(1));
+            if (num >= 1 && num <= 30) {
+                if (isMTheory === true) {
+                    return null;
+                }
+                isMTheory = false;
+            } else {
+                if (isMTheory === false) {
+                    return null;
+                }
+                isMTheory = true;
+            }
+        } else if (slot.match(/[A-ULW-Z]\d+/)) {
+            // Check if it's a theory slot and ends with '1' (morning theory)
+            if (slot.endsWith('1')) {
+                if (isMTheory === false) {
+                    return null;
+                }
+                isMTheory = true;
+            }
+        }
     }
-    return false;
+    return isMTheory;
 }
 function isMorningLab(slots) {
     let slot = slots.split('+')[0];
@@ -185,17 +207,15 @@ function isMorningLab(slots) {
     }
     return false;
 }
-
 function addTeacher(courseName, teacherName, slotsInput, venueInput) {
     slotsInput = slotsInput.trim();
     slotsInput = slotsInput.toUpperCase();
     const isMorning = isMorningTheory(slotsInput);
-    console.log('isMorning', isMorning, teacherName);
+    if (isMorning == null) {
+        return null;
+    }
     if (!teacherName.endsWith(' (E)')) {
         if (!isMorning) {
-            teacherName = teacherName + ' (E)';
-        }
-        if (isMorningLab(slotsInput)) {
             teacherName = teacherName + ' (E)';
         }
     }
@@ -220,12 +240,12 @@ function addTeacher(courseName, teacherName, slotsInput, venueInput) {
             .map((key) => key.toLowerCase())
             .includes(courseName.toLowerCase())
     ) {
-        return; // Skip adding the teacher if the course does not exist
+        return false; // Skip adding the teacher if the course does not exist
     }
 
     // Check if the slot exists, if not, skip adding the teacher
     if (isSlotExist(slotsInput) === false) {
-        return;
+        return false;
     }
 
     // Check if the teacher already exists for the course
@@ -243,42 +263,47 @@ function addTeacher(courseName, teacherName, slotsInput, venueInput) {
         slotsInput,
     );
     if (uniqueName == false) {
-        return;
+        return false;
     }
-    teacherName = uniqueName;
+    if (uniqueName == true) {
+        return true;
+    } else if (uniqueName) {
+        teacherName = uniqueName;
 
-    // If the slots or venue input is empty, use default values
-    slotsInput = slotsInput === '' ? 'SLOTS' : slotsInput;
-    venueInput = venueInput === '' ? 'VENUE' : venueInput;
+        // If the slots or venue input is empty, use default values
+        slotsInput = slotsInput === '' ? 'SLOTS' : slotsInput;
+        venueInput = venueInput === '' ? 'VENUE' : venueInput;
 
-    // Add the teacher to the timetableStoragePref
-    timetableStoragePref[window.activeTable.id].subject[courseName].teacher[
-        teacherName
-    ] = {
-        slots: slotsInput,
-        venue: venueInput,
-        color: document.getElementById('color1-select').value, // Assuming color input is always valid
-    };
+        // Add the teacher to the timetableStoragePref
+        timetableStoragePref[window.activeTable.id].subject[courseName].teacher[
+            teacherName
+        ] = {
+            slots: slotsInput,
+            venue: venueInput,
+            color: document.getElementById('color1-select').value, // Assuming color input is always valid
+        };
 
-    // Update UI to reflect the newly added teacher
-    const li = createTeacherLI({
-        courseName: courseName,
-        slots: slotsInput,
-        venue: venueInput,
-        color: document.getElementById('color1-select').value,
-        teacherName: teacherName,
-    });
-    li.addEventListener('click', liClick);
-    const dropdownDivs = document.querySelectorAll('.dropdown');
-    for (let dropdownDiv of dropdownDivs) {
-        const cname = dropdownDiv.querySelector('.cname');
-        if (cname && cname.textContent === courseName) {
-            const ul = dropdownDiv.querySelector('ul');
-            if (ul && ul.tagName === 'UL') {
-                ul.appendChild(li);
+        // Update UI to reflect the newly added teacher
+        const li = createTeacherLI({
+            courseName: courseName,
+            slots: slotsInput,
+            venue: venueInput,
+            color: document.getElementById('color1-select').value,
+            teacherName: teacherName,
+        });
+        li.addEventListener('click', liClick);
+        const dropdownDivs = document.querySelectorAll('.dropdown');
+        for (let dropdownDiv of dropdownDivs) {
+            const cname = dropdownDiv.querySelector('.cname');
+            if (cname && cname.textContent === courseName) {
+                const ul = dropdownDiv.querySelector('ul');
+                if (ul && ul.tagName === 'UL') {
+                    ul.appendChild(li);
+                }
+                break; // Exit the loop once we've found the matching element
             }
-            break; // Exit the loop once we've found the matching element
         }
+        return true;
     }
 }
 function addMultipleTeacher() {
@@ -2222,7 +2247,7 @@ function removeDotsLive(inputElement) {
     let cleanedValue = inputValue.replace(/\./g, '');
     cleanedValue = inputValue.replace(/\--/g, '-');
     cleanedValue = cleanedValue.replace(/\  /g, ' ');
-    cleanedValue = cleanedValue.replace(/[^a-zA-Z0-9+ -]/g, '');
+    cleanedValue = cleanedValue.replace(/[^a-zA-Z0-9+ \-()]/g, '');
     inputElement.value = cleanedValue;
 }
 
@@ -3769,68 +3794,29 @@ document
                 if (isSlotExist(slotsInput) === false) {
                     spanMsg = 'Slot Does Not Exist';
                     spanMsgColor = 'red';
-                } else if (
-                    !Object.keys(
-                        timetableStoragePref[window.activeTable.id].subject[
-                            courseName
-                        ].teacher,
-                    )
-                        .map((key) => key.toLowerCase())
-                        .includes(teacherName.toLowerCase())
-                ) {
-                    timetableStoragePref[window.activeTable.id].subject[
-                        courseName
-                    ].teacher[teacherName] = {
-                        slots: 'SLOTS',
-                        venue: 'VENUE',
-                        color: '',
-                    };
-                    if (slotsInput === '') {
-                        slotsInput = 'SLOTS';
-                    }
-                    if (venueInput === '') {
-                        venueInput = 'VENUE';
-                    }
-
-                    timetableStoragePref[window.activeTable.id].subject[
-                        courseName
-                    ].teacher[teacherName]['venue'] = venueInput;
-                    timetableStoragePref[window.activeTable.id].subject[
-                        courseName
-                    ].teacher[teacherName]['slots'] = slotsInput;
-                    timetableStoragePref[window.activeTable.id].subject[
-                        courseName
-                    ].teacher[teacherName]['color'] = colorInput;
-                    spanMsg = 'Teacher Added Successfully';
-                    spanMsgColor = 'green';
-                    // document.getElementById('slot-input').value = '';
-                    document.getElementById('teacher-input_remove').value = '';
-                    //document.getElementById('venue-input').value = '';
-                    var teacherData = {
-                        courseName: courseName,
-                        slots: slotsInput,
-                        venue: venueInput,
-                        color: colorInput,
-                        teacherName: teacherName,
-                    };
-                    const li = createTeacherLI(teacherData);
-                    li.addEventListener('click', liClick);
-                    const dropdownDivs = document.querySelectorAll('.dropdown');
-                    for (let dropdownDiv of dropdownDivs) {
-                        const cname = dropdownDiv.querySelector('.cname');
-                        if (cname && cname.textContent === courseName) {
-                            const ul = dropdownDiv.querySelector('ul');
-                            if (ul && ul.tagName === 'UL') {
-                                ul.appendChild(li);
-                            }
-                            // Exit the loop once we've found the matching element
-                        }
-                    }
                 } else {
-                    spanMsg = 'Teacher Already Exists';
-                    spanMsgColor = 'orange';
+                    let x = addTeacher(
+                        courseName,
+                        teacherName,
+                        slotsInput,
+                        venueInput,
+                    );
+                    if (x == null) {
+                        spanMsg = 'Slot error';
+                        spanMsgColor = 'red';
+                    } else if (x == true) {
+                        spanMsg = 'Teacher Added Successfully';
+                        spanMsgColor = 'green';
+                        document.getElementById('teacher-input_remove').value =
+                            '';
+                    } else {
+                        spanMsg = 'Teacher Already Exists';
+                        spanMsgColor = 'orange';
+                    }
                 }
             }
+            updateDataJsonFromCourseList();
+            revertRerrange();
             rearrangeTeacherRefresh();
             updateLocalForage();
         }
