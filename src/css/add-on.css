@@ -362,6 +362,6 @@ tr.sortable-chosen1 td {
 /* Height for larger screens */
 @media (min-width: 768px) {
     #teachers-multiple-input {
-        min-height: 400px;
+        min-height: 250px;
     }
 }
