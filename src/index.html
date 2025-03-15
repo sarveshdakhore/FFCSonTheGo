@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>FFCS Planner</title>
         <link rel="manifest" href="./manifest.webmanifest" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
         <link
             rel="icon"
             sizes="192x192"
@@ -129,10 +130,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 >
                     <span class="navbar-toggler-icon"></span>
                 </button>
-
+            
                 <div
                     id="navbar"
                     class="collapse navbar-collapse justify-content-between"
+                    style="white-space: nowrap;"
                 >
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown">
@@ -160,8 +162,83 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                             </ul>
                         </li>
                     </ul>
-
+            
                     <div class="navbar-nav flex-row flex-wrap md-auto">
+                        <!-- Google Login Button -->
+                        <!-- <button display="none" id="login-btn" class="btn btn-light btn-block" style="border: 1px solid #ddd; border-radius: 5px; display: inline-flex; align-items: center; justify-content: center; padding: 0px 10px; max-width: 250px; white-space: nowrap;">
+                            <img src="https://www.gstatic.com/images/branding/product/1x/gsa_64dp.png" alt="Google logo" style="width:21px; margin-bottom:2.7px;">
+                            <span style=" font-weight: bold; color: #555;">Sign in&nbsp;&nbsp;</span>
+                        </button> -->
+                        <div id="user-opt" display="none">
+                            &nbsp;&nbsp;
+                            <div class="dropdown d-inline" style="display: none;">
+                                <a
+                                    id="logout-button"
+                                    class="btn btn-outline-secondary dropdown-toggle nav-btn-outline"
+                                    href="#"
+                                    role="button"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                    ><i class="fas fa-user"></i
+                                    >&nbsp;&nbsp;User</a
+                                >
+                
+                                <ul
+                                    class="dropdown-menu dropdown-menu-light"
+                                    aria-labelledby="logout-button"
+                                >
+                                    <li>
+                                        <a
+                                            rel="noopener"
+                                            class="dropdown-item"
+                                            id = "logout-link"
+                                            href=""
+                                            target="_blank"
+                                        >
+                                            <i class="fas fa-sign-out" aria-hidden="true"></i>
+                                            &nbsp;&nbsp;<span>Logout</span>
+                                        </a>
+                                    </li>
+                
+                                    <li>
+                                        <a
+                                            rel="noopener"
+                                            class="dropdown-item"
+                                            href="https://www.linkedin.com/sharing/share-offsite/?url=https://ffcs.sarveshdakhore.in/"
+                                            target="_blank"
+                                            id="username-edit"
+                                        >
+                                            <i class="fas fa-edit"></i>
+                                            &nbsp;&nbsp;<span>set username</span>
+                                        </a>
+                                    </li>
+                
+                                    <li>
+                                        <a
+                                            rel="noopener"
+                                            class="dropdown-item"
+                                            href="https://twitter.com/intent/tweet?text=FFCS made hassle free! https://ffcs.sarveshdakhore.in/"
+                                            target="_blank"
+                                        >
+                                            <i class="fas fa-user-friends"></i>
+                                            &nbsp;&nbsp;<span>Friends</span>
+                                        </a>
+                                    </li>
+                
+                                    <li>
+                                        <a
+                                            class="dropdown-item"
+                                            href="whatsapp://send?text=FFCS made hassle free! https://ffcs.sarveshdakhore.in/"
+                                            target="_blank"
+                                        >
+                                            <i class="fas fa-location-arrow"></i>
+                                            &nbsp;&nbsp;<span>Track FFCS</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        &nbsp;&nbsp;
                         <div class="dropdown d-inline">
                             <a
                                 id="share-button"
@@ -173,7 +250,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                 ><i class="fas fa-share"></i
                                 >&nbsp;&nbsp;Share</a
                             >
-
+            
                             <ul
                                 class="dropdown-menu dropdown-menu-light"
                                 aria-labelledby="share-button"
@@ -189,7 +266,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                         <span>&nbsp;&nbsp;Facebook</span>
                                     </a>
                                 </li>
-
+            
                                 <li>
                                     <a
                                         rel="noopener"
@@ -201,7 +278,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                         <span>&nbsp;&nbsp;LinkedIn</span>
                                     </a>
                                 </li>
-
+            
                                 <li>
                                     <a
                                         rel="noopener"
@@ -213,7 +290,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                         <span>&nbsp;&nbsp;Twitter</span>
                                     </a>
                                 </li>
-
+            
                                 <li>
                                     <a
                                         class="dropdown-item"
@@ -226,11 +303,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                 </li>
                             </ul>
                         </div>
-
+            
                         <a
                             rel="noopener"
                             href="https://github.com/sarveshdakhore/FFCSonTheGo"
                             target="_blank"
+                            hidden
                         >
                             <button
                                 class="btn btn-outline-secondary nav-btn-outline ms-2"
@@ -241,7 +319,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                 <i class="fab fa-github"></i>&nbsp;&nbsp;GitHub
                             </button>
                         </a>
-
+            
                         <a
                             rel="noopener"
                             href="https://sarveshdakhore.in/rd/how_to_use_ffcs_planner"
@@ -257,7 +335,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                 >&nbsp;&nbsp;How To Use ?
                             </button>
                         </a>
+                        
+
+
                     </div>
+                </div>
+            </div>
                 </div>
             </div>
         </nav>

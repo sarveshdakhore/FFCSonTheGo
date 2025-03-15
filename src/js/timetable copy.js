@@ -12,7 +12,7 @@ window.clashMap = clashMap;
 // Assuming slotsExistInNonLectureFormat is a Set
 slotsExistInNonLectureFormat.add('');
 slotsExistInNonLectureFormat.add('SLOTS');
-let lastMerge = null;
+var lastMerge = null;
 // ********************* Global Functions *********************
 
 // ================== Sign in/Sign up ==================
@@ -47,41 +47,35 @@ const provider = new GoogleAuthProvider();
 
 let userEmail = null;
 onAuthStateChanged(auth, async (user) => {
-    return;
     if (user) {
         userEmail = user.email;
         // Show user options and hide login button after successful login
         showUserOpt();
         login.style.display = 'none';
-        console.log('User already signed in: ', user.displayName);
-        // Show the user options div and hide the login button
-                const userDocSnapTable = await getUserTablePref(user.email);
-        const userDocRef = doc(db, 'users_tablepref', user.email);
-        
-        if (userDocSnapTable !== false) {
-            console.log('User data found:', userDocSnapTable);
-            console.log('timetableStoragePref:', timetableStoragePref);
-            if (JSON.stringify(userDocSnapTable) == JSON.stringify(timetableStoragePref)) {
-                return;
-            } else {
-                // Merge tables and parse the result
-                const mergedTables = mergeTables(userDocSnapTable, timetableStoragePref);
+        // console.log('User already signed in: ', user.displayName);
+        // // Show the user options div and hide the login button
+        // const userDocSnapTable = await getUserTablePref(user.email); // Await the promise
+        // const userDocRef = doc(db, 'users_tablepref', user.email);
+        // if (userDocSnapTable !== false) {
+        //     console.log('User data found:', userDocSnapTable);
+        //     if (JSON.stringify(userDocSnapTable) === JSON.stringify(timetableStoragePref)) {
+        //         return;
+        //     } else {
+        //         // Update the user's tablepref field
+        //         const newData = JSON.stringify(mergeTables(userDocSnapTable, timetableStoragePref))
                 
-                // Update the user's tablepref field
-                await updateUserData(mergedTables); // Await the update
-                timetableStoragePref = mergedTables;
-                updateLocalForage();
-                //location.reload();
-                console.log("Reloaded");
-            }
-        } else {
-            // Create a new user document if it doesn't exist
-            const initialData = {
-                tablepref: JSON.stringify(timetableStoragePref),
-            };
-            await setDoc(userDocRef, initialData);
-            console.log('New user document created');
-        }
+        //         await updateUserData(newData); // Await the update
+        //         timetableStoragePref = JSON.parse(newData.tablepref);
+        //         location.reload();
+        //     }
+        // } else {
+        //     // Create a new user document if it doesn't exist
+        //     const initialData = {
+        //         tablepref: JSON.stringify(timetableStoragePref),
+        //     };
+        //     await setDoc(userDocRef, initialData);
+        //     console.log('New user document created');
+        // }
         
     } else {
         console.log('No user is signed in.');
@@ -106,27 +100,25 @@ function showUserOpt() {
 
 // Function to update the tablepref field in the user's document
 const updateUserData = async (newTablePref) => {
-    return;
     if (!userEmail) {
         console.error('No user logged in. Cannot update data.');
         return;
     }
     const userDocRef = doc(db, 'users_tablepref', userEmail);
     console.log('Updating user data...', lastMerge,'\n\n', newTablePref);
-    if (JSON.stringify(newTablePref) === JSON.stringify(lastMerge)) {
-        console.log('No changes to user data');
-        return;
+    // if (JSON.stringify(newTablePref) === JSON.stringify(lastMerge)) {
+    //     console.log('No changes to user data');
+    //     return;
         
-    }
+    // }
     try {
         await updateDoc(userDocRef, { tablepref: JSON.stringify(newTablePref) });
-        lastMerge = JSON.parse(JSON.stringify(newTablePref));
+        lastMerge = await getUserTablePref(userEmail);
         console.log('User data updated successfully');
     } catch (error) {
-        // console.error('Error updating user data:', error);
+        console.error('Error updating user data:', error);
     }
 };
-
 
 // Function to hide the div
 function hideUserOpt() {
@@ -184,20 +176,15 @@ const mergeTables = (userTables, newTables) => {
                 counter++;
             }
 
-            // Check if the table data is the same as any table in userTables
-            const isDuplicate = userTables.some(userTable => JSON.stringify(userTable.data) === JSON.stringify(newTable.data));
+            // Add the unique table name to the set
+            tableNameSet.add(tableName);
 
-            if (!isDuplicate) {
-                // Add the unique table name to the set
-                tableNameSet.add(tableName);
-
-                // Update the table name and add to mergedTables
-                mergedTables.push({
-                    ...newTable,
-                    name: tableName,
-                    id: mergedTables.length // Update the ID to be sequential
-                });
-            }
+            // Update the table name and add to mergedTables
+            mergedTables.push({
+                ...newTable,
+                name: tableName,
+                id: mergedTables.length // Update the ID to be sequential
+            });
         });
 
         return mergedTables;
@@ -210,24 +197,22 @@ const mergeTables = (userTables, newTables) => {
 const handleLogin = () => {
     signInWithPopup(auth, provider)
         .then(async (result) => {
-            return;
-            console.error('Login error: Setup blocked');
             const user = result.user;
             console.log('Signed in as: ', user.email);
             // Try to get the user's document's field data from Firestore
             const userDocSnapTable = await getUserTablePref(user.email); // Await the promise
             const userDocRef = doc(db, 'users_tablepref', user.email);
             if (userDocSnapTable !== false) {
-                //console.log('User data found:', userDocSnapTable);
+                console.log('User data found:', userDocSnapTable);
                 if (JSON.stringify(userDocSnapTable) === JSON.stringify(timetableStoragePref)) {
                     return;
                 } else {
                     // Update the user's tablepref field
                     const newData=mergeTables(userDocSnapTable, timetableStoragePref);
                     await updateUserData(newData); // Await the update
-                    //console.log("newData",newData)
+                    console.log("newData",newData)
                     timetableStoragePref = newData;
-                    lastMerge = JSON.parse(JSON.stringify(newData));
+                    lastMerge = await getUserTablePref(user.email);
                     updateLocalForage();
                     location.reload();
                 }
@@ -237,7 +222,7 @@ const handleLogin = () => {
                     tablepref: JSON.stringify(timetableStoragePref),
                 };
                 await setDoc(userDocRef, initialData);
-                lastMerge = JSON.parse(JSON.stringify(initialData));
+                lastMerge = await getUserTablePref(user.email);
                 console.log('New user document created');
             }
             // Show user options and hide login button after successful login
@@ -355,31 +340,21 @@ function checkTeacherAndSlotsMatch(courseName, teacherName, slotString) {
     // Recursive helper function to generate a unique name and check slots
     function generateUniqueNameAndCheckSlots(baseName, counter = 1) {
         let uniqueName = counter === 1 ? baseName : `${baseName} ${counter}`;
-        console.log('Unique name:', uniqueName);
         const uniqueNameSlots = teachers[uniqueName]
             ? teachers[uniqueName].slots.split('+')
             : [];
-        console.log('Unique name slots:', uniqueNameSlots);
         if (doSlotsMatch(uniqueNameSlots, slots)) {
             // If the slots match, return false
             return false;
-        }
-        else if (teachers.hasOwnProperty(uniqueName)) {
-
+        } else if (teachers.hasOwnProperty(uniqueName)) {
             // If the unique name already exists, check for slots merge property
-            let Tslots = getTeacherSlots(courseName, uniqueName);
-            if(isTheory(Tslots) && Tslots.includes('L')){
-                console.log('Theory and Lab slots are not allowed to merge',uniqueName ,baseName,Tslots,slotString);
-                return generateUniqueNameAndCheckSlots(baseName, counter+1);
-            }
-            if (Tslots === null) {
-                return false;
-            }
+            let Tslots = getTeacherSlots(courseName, teacherName);
+
             if (isTheory(Tslots) && !isTheory(slotString)) {
                 if (isMorningTheory(Tslots) && !isMorningLab(slotString)) {
                     updateTeacherSlots(
                         courseName,
-                        uniqueName,
+                        teacherName,
                         Tslots + '+' + slotString,
                     );
                     return true;
@@ -389,7 +364,7 @@ function checkTeacherAndSlotsMatch(courseName, teacherName, slotString) {
                 ) {
                     updateTeacherSlots(
                         courseName,
-                        uniqueName,
+                        teacherName,
                         Tslots + '+' + slotString,
                     );
                     return true;
@@ -398,7 +373,7 @@ function checkTeacherAndSlotsMatch(courseName, teacherName, slotString) {
                 if (isMorningTheory(slotString) && !isMorningLab(Tslots)) {
                     updateTeacherSlots(
                         courseName,
-                        uniqueName,
+                        teacherName,
                         slotString + '+' + Tslots,
                     );
                     return true;
@@ -408,7 +383,7 @@ function checkTeacherAndSlotsMatch(courseName, teacherName, slotString) {
                 ) {
                     updateTeacherSlots(
                         courseName,
-                        uniqueName,
+                        teacherName,
                         slotString + '+' + Tslots,
                     );
                     return true;
@@ -490,11 +465,12 @@ function isMorningLab(slots) {
     return false;
 }
 function addTeacher(courseName, teacherName, slotsInput, venueInput) {
-    //console.log(teacherName, slotsInput);
     slotsInput = slotsInput.trim();
     slotsInput = slotsInput.toUpperCase();
     const isMorning = isMorningTheory(slotsInput);
-    
+    if (isMorning == null) {
+        return null;
+    }
     if (!teacherName.endsWith(' (E)')) {
         if (!isMorning) {
             teacherName = teacherName + ' (E)';
@@ -689,24 +665,7 @@ function openAllDropdowns() {
 function editPrefCollapse() {
     closeAllDropdowns();
 }
-// Function to run updateUserData every 1 minute
-const startAutoUpdate = (getNewTablePref) => {
-    if (typeof getNewTablePref !== 'function') {
-        console.error('getNewTablePref is not a function');
-        return;
-    }
-    setInterval(async () => {
-        const newTablePref = getNewTablePref();
-        console.log('Auto-update triggered with newTablePref:', newTablePref);
-        await updateUserData(newTablePref);
-    }, 60000); // 60000 milliseconds = 1 minute
-};
 
-// Function to get the latest timetableStoragePref
-const getLatestTimetableStoragePref = () => timetableStoragePref;
-
-// Start the auto-update with a function that returns the latest timetableStoragePref
-//startAutoUpdate(getLatestTimetableStoragePref);
 // ------------------ Basic Ends Here ------------------
 
 // ================== Get From Something ==================
@@ -1051,7 +1010,7 @@ function updateSlots(slots) {
                 if (clashMap[slot][i].includes('L')) {
                     labSlots.push(clashMap[slot][i]);
                 } else {
-                        thSlots.push(clashMap[slot][i]);
+                    thSlots.push(clashMap[slot][i]);
                 }
             }
         }
@@ -1413,6 +1372,7 @@ function updateDataJsonFromCourseList() {
         };
         activeData.push(courseData);
     });
+    updateLocalForage();
 }
 
 function updateTeacherInAttackDataOnTeacherSave(
@@ -1675,9 +1635,9 @@ function courseRemove(courseToRemove) {
         var courseII = getCourseNameAndFacultyFromTr(trElement)[0];
         if (courseToRemove === courseII) {
             removeCourseFromTimetable(dataCourseValue);
+            updateLocalForage();
             removeCourseFromCourseList(dataCourseValue);
             removeCourseFromSubject(dataCourseValue);
-            updateLocalForage();
         }
     });
 }
@@ -1867,14 +1827,12 @@ function liClick() {
             updateDataJsonFromCourseList();
             revertRerrange();
             rearrangeTeacherRefresh();
-            
         } else {
             radioButton.checked = true; // This radio button is now the currently selected one
             addOnRadioTrue(radioButton);
             updateDataJsonFromCourseList();
             revertRerrange();
             rearrangeTeacherRefresh();
-            
         }
     } catch (error) {
         console.error('Error in liClick function:', error);
@@ -3234,7 +3192,7 @@ function updateLocalForage() {
     localforage
         .setItem('timetableStoragePref', timetableStoragePref)
         .catch(console.error);
-    //console.log(timetableStoragePref);
+    console.log(timetableStoragePref);
     updateUserData(timetableStoragePref);
 }
 
@@ -3777,8 +3735,7 @@ window.initializeTimetable = () => {
             showAddTeacherDiv();
             activateSortableForCourseList();
             addEventListnerToCourseList();
-            makeRadioTrueOnPageLoad();
-            lastMerge = JSON.parse(JSON.stringify(timetableStoragePref));
+            console.log(lastMerge);
             // Renaming the 'Default Table' option
             $('#tt-picker-dropdown .tt-picker-label a')
                 .first()
@@ -3788,9 +3745,9 @@ window.initializeTimetable = () => {
             timetableStoragePref.slice(1).forEach(function (table) {
                 addTableToPicker(table.id, table.name);
             });
+            
         })
         .catch(console.error);
-        
 };
 
 /*
@@ -3817,7 +3774,7 @@ window.addCourseToTimetable = (courseData) => {
                 >`,
             );
         }
-        if (slot[0][0] == 'L') {
+        if (courseData.slots[0][0] == 'L') {
             $divElement.data('is-lab', true);
         } else {
             $divElement.data('is-theory', true);
