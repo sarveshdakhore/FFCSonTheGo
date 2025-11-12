@@ -1,6 +1,6 @@
 {
     "name": "ffcsplanner",
-    "version": "2.0.0",
+    "version": "3.0.0",
     "lastUpdate": {
         "vellore": "All Semester",
         "chennai": "All Semester"
@@ -16,10 +16,11 @@
         "build": "yarn convert && parcel build src/index.html && yarn build:sw",
         "convert": "node util/convert_xlsx_to_json.js && node util/convert_json_to_data.js",
         "test": "jest tests",
-        "prepare": "husky install"
+        "prepare": "husky install",
+        "serve": "npx http-server dist -p 8008"
     },
     "engines": {
-        "node": "^20"
+        "node": ">=20"
     },
     "browserslist": "> 0.5%, last 2 versions, not dead",
     "dependencies": {
@@ -42,7 +43,8 @@
         "parcel": "^2.10.1",
         "sass": "^1.69.5",
         "workbox-cli": "^7.0.0",
-        "xlsx": "^0.18.5"
+        "xlsx": "^0.18.5",
+        "yarn": "^1.22.22"
     },
     "devDependencies": {
         "husky": "^8.0.0",

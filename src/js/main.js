@@ -42,6 +42,7 @@ import * as Utils from './utils';
 
 const lastUpdate = require('../../package.json')['lastUpdate'];
 
+
 $(function () {
     /*
         Remove focus from quick buttons once clicked

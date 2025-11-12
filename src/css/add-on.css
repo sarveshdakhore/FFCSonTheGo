@@ -1,15 +1,31 @@
 .header-button {
     display: flex;
     flex-direction: row;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
 }
 .header-button-element {
-    width: 70%;
+    width: 45%;
     display: flex;
     flex-direction: row;
     direction: rtl;
 }
 .header-button-element > * {
     margin-left: 1%;
+}
+
+#teacher-search-input:focus,
+#teacher-sort-dropdown:focus {
+    outline: none;
+    box-shadow: none;
+    border-color: #86b7fe;
+}
+
+#teacher-search-input:disabled,
+#teacher-sort-dropdown:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #e9ecef;
 }
 
 .search_btn_course {
@@ -161,6 +177,42 @@
 @media screen and (max-width: 300px) {
     .c_pref {
         font-size: 0;
+    }
+}
+
+/* Responsive adjustments for course panel header controls */
+@media screen and (max-width: 768px) {
+    #teacher-search-input {
+        min-width: 80px !important;
+        width: 120px !important;
+    }
+
+    #teacher-sort-dropdown {
+        min-width: 80px !important;
+        width: 100px !important;
+    }
+
+    #tt-subject-collapse span {
+        display: none;
+    }
+
+    #tt-subject-collapse {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    #teacher-search-input {
+        min-width: 60px !important;
+        width: 80px !important;
+        font-size: 12px !important;
+    }
+
+    #teacher-sort-dropdown {
+        min-width: 60px !important;
+        width: 80px !important;
+        font-size: 12px !important;
     }
 }
 
@@ -365,3 +417,6 @@ tr.sortable-chosen1 td {
         min-height: 250px;
     }
 }
+
+
+

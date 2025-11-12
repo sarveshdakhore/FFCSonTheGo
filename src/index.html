@@ -370,11 +370,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <!-- #1 - Course Panel -->
         <div class="container-xl">
             <div class="card">
-                <div class="card-header text-left fw-bold header-button">
-                    <div class="c_pref" style="width: 28%; align-self: center">
-                        Course Preferences
+                <div class="card-header text-left fw-bold header-button" style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                    <!-- Left side: Sort label + dropdown + search + Collapse All -->
+                    <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 1; min-width: 0; overflow: hidden;">
+                        <span style="font-weight: bold; font-size: 14px; white-space: nowrap; flex-shrink: 0;">Sort</span>
+                        <select
+                            id="teacher-sort-dropdown"
+                            class="form-select"
+                            style="min-width: 70px; max-width: 130px; width: 110px; height: 38px; flex-shrink: 1;"
+                        >
+                            <option value="none">None</option>
+                            <option value="morning">Morning</option>
+                            <option value="evening">Evening</option>
+                        </select>
+                        <input
+                            id="teacher-search-input"
+                            type="text"
+                            class="form-control"
+                            placeholder="Search..."
+                            style="min-width: 90px; max-width: 170px; width: 140px; height: 38px; flex-shrink: 1;"
+                            autocomplete="off"
+                        />
+                        <button
+                            id="tt-subject-collapse"
+                            class="btn btn-outline-secondary"
+                            type="button"
+                            onclick="editPrefCollapse()"
+                            style="white-space: nowrap; flex-shrink: 1; min-width: 40px;"
+                        >
+                            <i class="fas fa-chevron-up"></i>
+                            <span>&nbsp;&nbsp;Collapse All</span>
+                        </button>
                     </div>
-                    <div class="text-left header-button-element">
+
+                    <!-- Right side: Action buttons -->
+                    <div class="text-left header-button-element" style="flex-shrink: 0; min-width: fit-content;">
                         <button
                             id="tt-teacher-add"
                             type="button"
@@ -387,8 +417,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                             type="button"
                             class="btn btn-primary"
                         >
-                            <!-- data-toggle="modal"
-                            data-target="#exampleModal" -->
                             <i class="fas fa-plus"></i> &emsp13;Course
                         </button>
 
@@ -400,16 +428,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                             onclick="closeEditPref1()"
                         >
                             <span>&nbsp;Done</span>
-                        </button>
-                        <button
-                            style="display: none"
-                            id="tt-subject-collapse"
-                            class="btn btn-outline-secondary ms-1 me-1"
-                            type="button"
-                            onclick="editPrefCollapse()"
-                        >
-                            <i class="fas fa-chevron-up"></i>
-                            <span>&nbsp;&nbsp;Collapse All</span>
                         </button>
                         <div
                             class="form-check form-switch"
@@ -573,6 +591,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                     <hr />
                                 </div>
                                 <div class="modal-footer">
+                                    <button
+                                        class="btn btn-success"
+                                        type="button"
+                                        id="addMultipleCourse"
+                                    >
+                                        <i class="fas fa-plus"></i>
+                                        <span>&nbsp;&nbsp;Add Multiple</span>
+                                    </button>&emsp13;
                                     <button
                                         style="width: 30%"
                                         type="submit"
@@ -1080,7 +1106,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                 type="button"
                                 class="btn btn-success"
                             >
-                                Clear List
+                                Clear Selection
                             </button>
                         </div>
                     </div>
@@ -1173,7 +1199,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         data-bs-target="#reset-modal"
                     >
                         <i class="fas fa-redo"></i>
-                        <span>&nbsp;&nbsp;Reset Table</span>
+                        <span>&nbsp;&nbsp;Erase Table</span>
                     </button>
                 </div>
             </div>
@@ -1591,6 +1617,69 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </div>
         </div>
         <!-- End of Add Multiple Teachers Modal -->
+
+        <!-- The Add Multiple Courses Modal -->
+        <div
+            id="multiple-course-modal"
+            class="modal fade"
+            tabindex="-1"
+            aria-labelledby="multiple-course-modal-label"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="multiple-course-modal-label">
+                            Add Multiple Courses
+                        </h5>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <p>Copy your course registration details from the official email notification or course allocation document and paste below.</p>
+                        <p><strong>Supported Formats:</strong></p>
+                        <ul>
+                            <li>Tab-separated or space-separated values</li>
+                            <li>Course codes: BCSE301L, BMAT202P, CSE1001, etc.</li>
+                            <li>Credits: Integers or decimals (e.g., 4, 1.5)</li>
+                        </ul>
+                        <p><small><em>Note: Theory (L) and Lab (P) courses will be automatically grouped with combined credits.</em></small></p>
+                        <label for="courses-multiple-input">Paste Course Details</label>
+                        <textarea
+                            class="form-control"
+                            id="courses-multiple-input"
+                            rows="10"
+                            placeholder="Example:&#10;1  BCSE301L  Digital Logic and Design  3  0  2  0  4&#10;2  BSTS302P  Probability and Statistics Lab  0  0  2  0  1.5&#10;3  BMAT202L  Mathematics  4  0  0  0  4"
+                            autocomplete="off"
+                        ></textarea>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            id="confirm-multiple-courses-button"
+                            type="button"
+                            class="btn btn-primary"
+                            data-bs-dismiss="modal"
+                        >
+                            Add Courses
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End of Add Multiple Courses Modal -->
 
         <!-- The Switch Campus Modal -->
         <div
